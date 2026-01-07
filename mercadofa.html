@@ -1,0 +1,591 @@
+import React, { useState, useEffect } from 'react';
+import { 
+  Phone, 
+  ChevronRight, 
+  QrCode, 
+  Ticket, 
+  Wallet, 
+  BarChart3, 
+  User, 
+  Bell, 
+  Camera, 
+  Upload, 
+  CheckCircle2, 
+  X, 
+  History, 
+  ArrowRight,
+  Trophy,
+  ShoppingBag,
+  Info,
+  Map as MapIcon,
+  List,
+  Star,
+  MapPin,
+  Clock,
+  Zap,
+  Navigation,
+  Sun,
+  Moon
+} from 'lucide-react';
+
+// Mock Data para Mercados
+const MOCK_MERCHANTS = [
+  {
+    id: 'm1',
+    name: 'Supermercado Boa Compra',
+    distance: '1.2 km',
+    rule: '1 bilhete a cada R$ 5',
+    has_bonus: true,
+    bonus_text: 'Bilhetes em Dobro hoje!',
+    type: 'promo',
+    lat: 30, lng: 40,
+    address: 'Av. Paulista, 1234 - São Paulo',
+    hours: '08:00 - 22:00',
+    rating: 4.8
+  },
+  {
+    id: 'm2',
+    name: 'Mercado do Bairro',
+    distance: '0.8 km',
+    rule: '1 bilhete a cada R$ 10',
+    has_bonus: false,
+    type: 'normal',
+    lat: 60, lng: 20,
+    address: 'Rua das Flores, 45 - Centro',
+    hours: '07:00 - 20:00',
+    rating: 4.5
+  },
+  {
+    id: 'm3',
+    name: 'Hiper Premium',
+    distance: '2.5 km',
+    rule: '1 bilhete a cada R$ 5',
+    has_bonus: true,
+    bonus_text: 'Sorteio de R$ 10k extra',
+    type: 'featured',
+    lat: 45, lng: 75,
+    address: 'Shopping Center, Piso L1',
+    hours: '10:00 - 22:00',
+    rating: 4.9
+  }
+];
+
+const App = () => {
+  const [step, setStep] = useState('home'); 
+  const [viewMode, setViewMode] = useState('list');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [selectedMerchant, setSelectedMerchant] = useState(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [registrationSuccess, setRegistrationSuccess] = useState(null);
+
+  const navigateTo = (screen, data = null) => {
+    if (data) setSelectedMerchant(data);
+    setStep(screen);
+  };
+
+  const toggleTheme = () => setIsDarkMode(!isDarkMode);
+
+  // Variáveis de Estilo Dinâmicas
+  const themeClasses = {
+    bg: isDarkMode ? 'bg-slate-900' : 'bg-gray-50',
+    card: isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100',
+    text: isDarkMode ? 'text-slate-100' : 'text-gray-800',
+    textMuted: isDarkMode ? 'text-slate-400' : 'text-gray-500',
+    header: isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100',
+    nav: isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-100',
+    input: isDarkMode ? 'bg-slate-800 border-slate-700 text-white' : 'bg-gray-50 border-gray-200 text-gray-800',
+    divider: isDarkMode ? 'border-slate-700' : 'border-gray-50'
+  };
+
+  // Layout Base com Menu Inferior e Switch de Tema
+  const Layout = ({ children, title, showBack = false, backTarget = 'home' }) => (
+    <div className={`flex flex-col h-screen ${themeClasses.bg} ${themeClasses.text} overflow-hidden transition-colors duration-300`}>
+      <header className={`${themeClasses.header} px-6 pt-12 pb-4 flex justify-between items-center border-b shadow-sm z-10 transition-colors duration-300`}>
+        <div className="flex items-center gap-2">
+          {showBack && (
+            <button onClick={() => setStep(backTarget)} className={`p-2 -ml-2 ${isDarkMode ? 'text-slate-300' : 'text-gray-600'}`}>
+              <ArrowRight size={24} className="rotate-180" />
+            </button>
+          )}
+          <h1 className="text-xl font-bold">{title}</h1>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* Theme Toggle Switch */}
+          <button 
+            onClick={toggleTheme}
+            className={`p-2 rounded-xl transition-all ${isDarkMode ? 'bg-indigo-500/20 text-yellow-400' : 'bg-gray-100 text-gray-500'}`}
+          >
+            {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          </button>
+          
+          <button className={`relative p-2 ${isDarkMode ? 'text-slate-400' : 'text-gray-400'}`}>
+            <Bell size={22} />
+            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full"></span>
+          </button>
+          <button onClick={() => setStep('profile')} className="w-9 h-9 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold border-2 border-white shadow-sm">
+            JD
+          </button>
+        </div>
+      </header>
+
+      <main className="flex-1 overflow-y-auto pb-24">
+        {children}
+      </main>
+
+      <nav className={`${themeClasses.nav} fixed bottom-0 left-0 right-0 border-t px-6 py-3 flex justify-between items-center shadow-2xl z-20 transition-colors duration-300`}>
+        <button onClick={() => setStep('home')} className={`flex flex-col items-center gap-1 ${step === 'home' ? 'text-indigo-600' : isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
+          <ShoppingBag size={24} />
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Início</span>
+        </button>
+        <button onClick={() => setStep('discovery')} className={`flex flex-col items-center gap-1 ${step === 'discovery' ? 'text-indigo-600' : isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
+          <MapIcon size={24} />
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Mercados</span>
+        </button>
+        <div className="relative -mt-12">
+          <button 
+            onClick={() => setStep('scan')} 
+            className="w-16 h-16 bg-indigo-600 rounded-full border-4 border-white dark:border-slate-800 flex items-center justify-center text-white shadow-xl active:scale-90 transition-transform"
+          >
+            <QrCode size={28} />
+          </button>
+        </div>
+        <button onClick={() => setStep('tickets')} className={`flex flex-col items-center gap-1 ${step === 'tickets' ? 'text-indigo-600' : isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
+          <Ticket size={24} />
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Bilhetes</span>
+        </button>
+        <button onClick={() => setStep('wallet')} className={`flex flex-col items-center gap-1 ${step === 'wallet' ? 'text-indigo-600' : isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
+          <Wallet size={24} />
+          <span className="text-[10px] font-bold uppercase tracking-tighter">Carteira</span>
+        </button>
+      </nav>
+    </div>
+  );
+
+  // --- TELAS ---
+
+  const HomeScreen = () => (
+    <div className="p-6 space-y-6">
+      <div className="bg-indigo-600 rounded-[32px] p-6 text-white shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 opacity-10 -mr-8 -mt-8 rotate-12">
+          <Trophy size={180} />
+        </div>
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <p className="text-indigo-100 text-xs font-bold uppercase tracking-widest">Gastos em Janeiro</p>
+            <h2 className="text-4xl font-black mt-1">R$ 482,35</h2>
+          </div>
+          <div className="bg-white/20 p-2 rounded-xl backdrop-blur-md">
+            <Ticket size={24} />
+          </div>
+        </div>
+        <div className="flex gap-4">
+          <div className="flex-1 bg-white/10 rounded-2xl p-3 border border-white/10">
+            <p className="text-[10px] text-indigo-100 font-bold uppercase">Meus Bilhetes</p>
+            <p className="text-xl font-black">96</p>
+          </div>
+          <div className="flex-1 bg-white/10 rounded-2xl p-3 border border-white/10">
+            <p className="text-[10px] text-indigo-100 font-bold uppercase">Sorteio em</p>
+            <p className="text-xl font-black">24 Dias</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex justify-between items-center">
+          <h3 className={`font-black text-lg ${isDarkMode ? 'text-slate-200' : 'text-gray-800'}`}>Onde Comprar Hoje 🔥</h3>
+          <button onClick={() => setStep('discovery')} className="text-indigo-400 text-xs font-bold">Ver Mapa</button>
+        </div>
+        
+        {MOCK_MERCHANTS.filter(m => m.has_bonus).map((m) => (
+          <button 
+            key={m.id}
+            onClick={() => navigateTo('merchant-detail', m)}
+            className={`w-full p-4 rounded-3xl border flex items-center gap-4 text-left shadow-sm active:scale-[0.98] transition-all ${themeClasses.card}`}
+          >
+            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center relative ${isDarkMode ? 'bg-indigo-500/20 text-indigo-400' : 'bg-indigo-50 text-indigo-600'}`}>
+               <ShoppingBag size={28} />
+               <div className="absolute -top-1 -right-1 bg-orange-500 w-5 h-5 rounded-full flex items-center justify-center text-[10px] text-white border-2 border-white font-bold">2x</div>
+            </div>
+            <div className="flex-1">
+              <p className="font-bold">{m.name}</p>
+              <p className="text-xs text-orange-400 font-bold">{m.bonus_text}</p>
+              <p className={`text-[10px] mt-1 flex items-center gap-1 ${themeClasses.textMuted}`}>
+                <MapPin size={10} /> {m.distance} • Melhor Vantagem
+              </p>
+            </div>
+            <ChevronRight size={20} className={isDarkMode ? 'text-slate-600' : 'text-gray-300'} />
+          </button>
+        ))}
+      </div>
+
+      <div className={`${isDarkMode ? 'bg-green-500/10 border-green-500/20 text-green-400' : 'bg-green-50 border-green-100 text-green-800'} p-4 rounded-2xl border flex gap-3 transition-colors`}>
+        <div className={`${isDarkMode ? 'bg-green-500' : 'bg-green-600'} p-2 h-fit rounded-lg text-white`}>
+          <Zap size={16} />
+        </div>
+        <p className="text-xs leading-snug">
+          <b>Dica:</b> No <b>Hiper Premium</b> suas compras de hortifruti valem o triplo de bilhetes até sábado!
+        </p>
+      </div>
+
+      <div className="space-y-3 pb-4">
+        <h3 className={`font-black text-lg ${isDarkMode ? 'text-slate-200' : 'text-gray-800'}`}>Últimos Ganhos</h3>
+        <div className={`rounded-3xl border overflow-hidden ${themeClasses.card}`}>
+          {[1, 2].map((i) => (
+            <div key={i} className={`p-4 flex justify-between items-center border-b last:border-0 ${themeClasses.divider}`}>
+               <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${isDarkMode ? 'bg-slate-700 text-slate-400' : 'bg-gray-50 text-gray-400'}`}>
+                    <History size={18} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold">Mercado Central</p>
+                    <p className={`text-[10px] ${themeClasses.textMuted}`}>Ontem às 18:45</p>
+                  </div>
+               </div>
+               <div className="text-right">
+                  <p className="text-sm font-bold">R$ 42,90</p>
+                  <p className="text-[10px] font-bold text-green-500">+8 Bilhetes</p>
+               </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const DiscoveryScreen = () => (
+    <div className={`flex flex-col h-full ${themeClasses.bg}`}>
+      <div className={`${themeClasses.header} p-4 flex gap-2 border-b`}>
+        <button 
+          onClick={() => setViewMode('list')}
+          className={`flex-1 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all ${viewMode === 'list' ? 'bg-indigo-600 text-white shadow-lg' : isDarkMode ? 'bg-slate-700 text-slate-400' : 'bg-gray-100 text-gray-500'}`}
+        >
+          <List size={20} /> Lista
+        </button>
+        <button 
+          onClick={() => setViewMode('map')}
+          className={`flex-1 py-3 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all ${viewMode === 'map' ? 'bg-indigo-600 text-white shadow-lg' : isDarkMode ? 'bg-slate-700 text-slate-400' : 'bg-gray-100 text-gray-500'}`}
+        >
+          <MapIcon size={20} /> Mapa
+        </button>
+      </div>
+
+      {viewMode === 'list' ? (
+        <div className="p-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="font-bold">Próximos de você</h2>
+            <button className="text-xs text-indigo-400 flex items-center gap-1 font-bold">
+              <Navigation size={12} /> Ajustar Raio
+            </button>
+          </div>
+          
+          {MOCK_MERCHANTS.map((m) => (
+            <div 
+              key={m.id} 
+              onClick={() => navigateTo('merchant-detail', m)}
+              className={`${themeClasses.card} p-4 rounded-3xl border shadow-sm flex items-center gap-4 relative overflow-hidden active:scale-[0.98] transition-all`}
+            >
+              {m.has_bonus && (
+                <div className="absolute top-0 right-0 bg-orange-500 text-white px-3 py-1 rounded-bl-xl text-[9px] font-bold uppercase">
+                  Promo Ativa
+                </div>
+              )}
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${m.type === 'promo' ? 'bg-green-100 text-green-600' : m.type === 'featured' ? 'bg-yellow-100 text-yellow-600' : 'bg-blue-100 text-blue-600'}`}>
+                {m.type === 'featured' ? <Star size={32} fill="currentColor" /> : <ShoppingBag size={32} />}
+              </div>
+              <div className="flex-1">
+                <h4 className="font-bold">{m.name}</h4>
+                <p className={`text-xs flex items-center gap-1 mt-1 ${themeClasses.textMuted}`}>
+                   <MapPin size={12} /> {m.distance} • {m.rule}
+                </p>
+                <div className="flex items-center gap-2 mt-2">
+                   <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase ${isDarkMode ? 'bg-slate-700 text-slate-400' : 'bg-gray-100 text-gray-500'}`}>Sorteio Jan/26</span>
+                   <div className="flex items-center text-yellow-500 text-[10px] font-bold">
+                      <Star size={10} fill="currentColor" /> {m.rating}
+                   </div>
+                </div>
+              </div>
+              <ChevronRight size={20} className={isDarkMode ? 'text-slate-600' : 'text-gray-300'} />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className={`flex-1 relative ${isDarkMode ? 'bg-slate-950' : 'bg-gray-200'} overflow-hidden`}>
+          <div className={`absolute inset-0 opacity-20 pointer-events-none ${isDarkMode ? 'invert' : ''}`}>
+             <div className="w-full h-full bg-[radial-gradient(#e5e7eb_2px,transparent_2px)] [background-size:24px_24px]"></div>
+          </div>
+
+          {MOCK_MERCHANTS.map((m) => (
+            <button 
+              key={m.id}
+              onClick={() => setSelectedMerchant(m)}
+              className="absolute transition-all transform hover:scale-110 active:scale-90"
+              style={{ top: `${m.lat}%`, left: `${m.lng}%` }}
+            >
+              <div className="flex flex-col items-center">
+                <div className={`w-12 h-12 rounded-full border-4 ${isDarkMode ? 'border-slate-800' : 'border-white'} shadow-xl flex items-center justify-center text-white ${m.type === 'promo' ? 'bg-green-500' : m.type === 'featured' ? 'bg-yellow-500' : 'bg-blue-500'}`}>
+                  {m.type === 'featured' ? <Star size={20} fill="currentColor" /> : <ShoppingBag size={20} />}
+                </div>
+                <div className={`mt-1 px-2 py-0.5 rounded-full shadow-md ${isDarkMode ? 'bg-slate-800 text-slate-200' : 'bg-white text-gray-800'}`}>
+                   <p className="text-[10px] font-bold whitespace-nowrap">{m.name}</p>
+                </div>
+              </div>
+            </button>
+          ))}
+
+          {selectedMerchant && (
+            <div className={`absolute bottom-6 left-6 right-6 rounded-3xl p-5 shadow-2xl border flex gap-4 animate-in slide-in-from-bottom-10 duration-300 ${themeClasses.card}`}>
+               <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${selectedMerchant.type === 'promo' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
+                  <ShoppingBag size={32} />
+               </div>
+               <div className="flex-1">
+                  <h4 className="font-bold">{selectedMerchant.name}</h4>
+                  <p className={`text-xs mb-2 ${themeClasses.textMuted}`}>{selectedMerchant.distance} de distância</p>
+                  <button 
+                    onClick={() => navigateTo('merchant-detail', selectedMerchant)}
+                    className="bg-indigo-600 text-white text-xs font-bold px-4 py-2 rounded-xl"
+                  >
+                    Ver Vantagens
+                  </button>
+               </div>
+               <button onClick={() => setSelectedMerchant(null)} className="text-gray-400"><X size={20} /></button>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  const MerchantDetailScreen = () => (
+    <div className={`flex flex-col h-full ${isDarkMode ? 'bg-slate-900' : 'bg-white'}`}>
+      <div className="h-48 bg-indigo-600 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+        <button 
+          onClick={() => setStep('discovery')}
+          className="absolute top-12 left-6 bg-white/20 backdrop-blur-md p-2 rounded-full text-white"
+        >
+          <ArrowRight size={24} className="rotate-180" />
+        </button>
+        <div className="absolute bottom-6 left-6 text-white">
+          <h2 className="text-2xl font-black">{selectedMerchant?.name}</h2>
+          <p className="text-xs text-white/80 flex items-center gap-1">
+            <MapPin size={12} /> {selectedMerchant?.address}
+          </p>
+        </div>
+      </div>
+
+      <div className={`p-6 space-y-6 -mt-4 rounded-t-[32px] flex-1 ${isDarkMode ? 'bg-slate-900' : 'bg-white'}`}>
+        <div className="grid grid-cols-3 gap-4">
+           {[
+             { label: 'Distância', val: selectedMerchant?.distance },
+             { label: 'Avaliação', val: selectedMerchant?.rating, icon: <Star size={12} fill="#eab308" className="text-yellow-500" /> },
+             { label: 'Status', val: 'Aberto', color: 'text-green-500' }
+           ].map((item, i) => (
+            <div key={i} className={`text-center p-3 rounded-2xl ${isDarkMode ? 'bg-slate-800' : 'bg-gray-50'}`}>
+                <p className={`text-[10px] font-bold uppercase ${themeClasses.textMuted}`}>{item.label}</p>
+                <p className={`font-bold flex items-center justify-center gap-1 ${item.color || ''}`}>
+                  {item.icon} {item.val}
+                </p>
+            </div>
+           ))}
+        </div>
+
+        <div className={`${isDarkMode ? 'bg-indigo-500/10 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'} border-2 p-6 rounded-3xl relative overflow-hidden`}>
+           <div className="absolute top-0 right-0 p-2 bg-indigo-600 text-white rounded-bl-2xl">
+              <Zap size={16} fill="white" />
+           </div>
+           <h3 className={`font-black text-lg ${isDarkMode ? 'text-indigo-300' : 'text-indigo-900'}`}>Regra de Ganho</h3>
+           <p className="text-2xl font-black text-indigo-500 mt-2">{selectedMerchant?.rule}</p>
+           {selectedMerchant?.has_bonus && (
+             <div className={`${isDarkMode ? 'bg-slate-800/50 border-slate-700' : 'bg-white/60 border-white'} mt-4 p-3 rounded-2xl border`}>
+                <p className="text-xs font-bold flex items-center gap-2">
+                   <Trophy size={16} className="text-orange-500" /> {selectedMerchant?.bonus_text}
+                </p>
+             </div>
+           )}
+        </div>
+
+        <div className="space-y-4">
+           <div className="flex items-center gap-4">
+              <Clock size={20} className="text-indigo-400" />
+              <div>
+                 <p className={`text-[10px] font-bold uppercase ${themeClasses.textMuted}`}>Horário de Funcionamento</p>
+                 <p className="font-medium">{selectedMerchant?.hours}</p>
+              </div>
+           </div>
+           <div className="flex items-center gap-4">
+              <Navigation size={20} className="text-indigo-400" />
+              <div>
+                 <p className={`text-[10px] font-bold uppercase ${themeClasses.textMuted}`}>Como chegar</p>
+                 <p className="font-medium">Abrir no GPS</p>
+              </div>
+           </div>
+        </div>
+
+        <button 
+          onClick={() => setStep('scan')}
+          className="w-full bg-indigo-600 text-white py-5 rounded-3xl font-black text-lg shadow-xl shadow-indigo-500/20 active:scale-95 transition-transform mt-4"
+        >
+          Registrar Compra Aqui
+        </button>
+      </div>
+    </div>
+  );
+
+  const ScanScreen = () => {
+    const handleSimulateScan = () => {
+      setIsScanning(true);
+      setTimeout(() => {
+        setIsScanning(false);
+        setRegistrationSuccess({
+          amount: 124.90,
+          tickets: selectedMerchant?.has_bonus ? 48 : 24,
+          merchant: selectedMerchant?.name || 'Supermercado Parceiro'
+        });
+      }, 2000);
+    };
+
+    if (registrationSuccess) {
+      return (
+        <div className={`flex flex-col h-screen items-center justify-center p-6 text-center ${isDarkMode ? 'bg-slate-900 text-white' : 'bg-white'}`}>
+          <div className="w-24 h-24 bg-green-100/10 text-green-500 rounded-full flex items-center justify-center mb-6 scale-up-animation">
+            <CheckCircle2 size={60} />
+          </div>
+          <h2 className="text-2xl font-black">Sucesso!</h2>
+          <p className={`${themeClasses.textMuted} mt-2 mb-8 px-8 leading-tight`}>
+            Sua compra no <b>{registrationSuccess.merchant}</b> gerou novos bilhetes!
+          </p>
+          
+          <div className={`${isDarkMode ? 'bg-indigo-500/10 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'} w-full rounded-[40px] p-8 mb-8 border`}>
+            <div className="flex justify-between items-center mb-6">
+              <span className={`${isDarkMode ? 'text-indigo-300' : 'text-indigo-900'} font-bold opacity-60`}>Novos bilhetes</span>
+              <div className="flex items-center gap-2 text-indigo-500">
+                <Ticket size={24} />
+                <span className="text-5xl font-black">{registrationSuccess.tickets}</span>
+              </div>
+            </div>
+            <div className={`${isDarkMode ? 'bg-slate-800' : 'bg-white/60'} p-4 rounded-2xl flex items-center justify-between`}>
+               <span className={`text-[10px] font-bold uppercase ${themeClasses.textMuted}`}>Total na conta</span>
+               <span className="font-black">144 Bilhetes</span>
+            </div>
+          </div>
+
+          <button 
+            onClick={() => {
+              setRegistrationSuccess(null);
+              setStep('home');
+            }}
+            className="w-full bg-indigo-600 text-white py-5 rounded-3xl font-black shadow-lg shadow-indigo-500/20"
+          >
+            Continuar Comprando
+          </button>
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex flex-col h-screen bg-black">
+        <div className="p-6 flex justify-between items-center text-white pt-12">
+          <button onClick={() => setStep('home')} className="p-2 bg-white/10 rounded-full"><X size={24} /></button>
+          <h2 className="font-bold uppercase tracking-widest text-xs opacity-60">Escaneando</h2>
+          <div className="w-10"></div>
+        </div>
+        <div className="flex-1 flex flex-col items-center justify-center p-8">
+          <div className="w-full aspect-square border-2 border-indigo-500/50 rounded-[48px] relative overflow-hidden bg-white/5">
+             <div className="absolute inset-0 animate-scan"></div>
+             <div className="absolute inset-0 flex items-center justify-center">
+                {isScanning ? (
+                  <div className="flex flex-col items-center gap-3">
+                     <div className="w-12 h-12 border-4 border-t-indigo-500 border-white/10 rounded-full animate-spin"></div>
+                     <p className="text-white font-bold text-xs uppercase tracking-widest">Processando...</p>
+                  </div>
+                ) : (
+                  <QrCode size={120} className="text-white/10" />
+                )}
+             </div>
+          </div>
+        </div>
+        <div className="p-10 grid grid-cols-1 gap-4">
+          <button onClick={handleSimulateScan} className="bg-white text-black py-5 rounded-3xl font-black flex items-center justify-center gap-3 active:scale-95 transition-transform">
+            <Camera size={24} /> Simular Leitura
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const TicketsScreen = () => (
+    <Layout title="Meus Bilhetes" showBack>
+      <div className="p-6 text-center">
+        <div className={`${themeClasses.card} p-8 rounded-[40px] shadow-sm border mb-6`}>
+          <p className={`${themeClasses.textMuted} text-[10px] font-bold uppercase tracking-widest`}>Total de Chances</p>
+          <h2 className="text-7xl font-black text-indigo-600 my-4">96</h2>
+          <div className="flex items-center justify-center gap-2 text-green-500 font-bold text-sm">
+             <Trophy size={16} /> Estás no top 5% da semana!
+          </div>
+        </div>
+        <div className="space-y-4 text-left">
+           <h3 className="font-black">Seus Sorteios</h3>
+           <div className="bg-indigo-600 p-6 rounded-3xl text-white shadow-lg shadow-indigo-500/20">
+              <div className="flex justify-between items-center mb-4">
+                 <h4 className="font-black">Próxima Mega</h4>
+                 <span className="text-[10px] font-black bg-white/20 px-2 py-1 rounded-full uppercase">Ativo</span>
+              </div>
+              <p className="text-3xl font-black">R$ 5.000,00</p>
+              <div className="mt-6 flex justify-between items-end">
+                 <div>
+                    <p className="text-[10px] font-bold opacity-60 uppercase">Data do Sorteio</p>
+                    <p className="font-bold">31 Jan 2026</p>
+                 </div>
+                 <div className="text-right">
+                    <p className="text-[10px] font-bold opacity-60 uppercase">Seus Bilhetes</p>
+                    <p className="font-black text-xl">96</p>
+                 </div>
+              </div>
+           </div>
+        </div>
+      </div>
+    </Layout>
+  );
+
+  const renderScreen = () => {
+    switch (step) {
+      case 'home': return <Layout title="Cliente Fã"><HomeScreen /></Layout>;
+      case 'discovery': return <Layout title="Onde Comprar" showBack><DiscoveryScreen /></Layout>;
+      case 'merchant-detail': return <MerchantDetailScreen />;
+      case 'scan': return <ScanScreen />;
+      case 'tickets': return <TicketsScreen />;
+      case 'wallet': return <Layout title="Minha Carteira" showBack><div className="p-6 text-center text-gray-400">Página em construção</div></Layout>;
+      case 'profile': return <Layout title="Meu Perfil" showBack><div className="p-6 text-center text-gray-400">Página em construção</div></Layout>;
+      default: return <HomeScreen />;
+    }
+  };
+
+  return (
+    <div className={`max-w-md mx-auto min-h-screen shadow-2xl font-sans select-none overflow-x-hidden transition-colors duration-300 ${themeClasses.bg}`}>
+      <style>{`
+        @keyframes scan {
+          0%, 100% { top: 0%; height: 2px; }
+          50% { top: 100%; height: 2px; }
+        }
+        .animate-scan {
+          position: absolute;
+          width: 100%;
+          background: #4f46e5;
+          box-shadow: 0 0 20px #4f46e5, 0 0 40px #4f46e5;
+          animation: scan 2s infinite ease-in-out;
+        }
+        .scale-up-animation {
+          animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes scaleUp {
+          from { transform: scale(0.5); opacity: 0; }
+          to { transform: scale(1); opacity: 1; }
+        }
+        ::-webkit-scrollbar { display: none; }
+      `}</style>
+      {renderScreen()}
+    </div>
+  );
+};
+
+export default App;
