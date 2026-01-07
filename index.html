@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MercadoFã - v1.5 - Ecossistema Completo</title>
+    <title>MercadoFã - v1.7 - Ecossistema Completo</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,8 +34,8 @@
             from { transform: scale(0.5); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         body { -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; overflow-x: hidden; }
     </style>
 </head>
@@ -44,7 +44,7 @@
 
     <script type="text/babel" data-presets="env,react">
         const { useState, useEffect, useMemo } = React;
-        const APP_VERSION = "1.5.0";
+        const APP_VERSION = "1.7.0";
 
         // --- COMPONENTES DE ÍCONE ---
         const IconBase = ({ children, size = 24, ...props }) => (
@@ -73,51 +73,42 @@
             ShieldAlert: (p) => <IconBase {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="M12 8v4"/><path d="M12 16h.01"/></IconBase>,
             PieChart: (p) => <IconBase {...p}><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></IconBase>,
             Settings: (p) => <IconBase {...p}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></IconBase>,
-            Users: (p) => <IconBase {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></IconBase>
+            Users: (p) => <IconBase {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></IconBase>,
+            Menu: (p) => <IconBase {...p}><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></IconBase>,
+            X: (p) => <IconBase {...p}><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></IconBase>,
+            Activity: (p) => <IconBase {...p}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></IconBase>
         };
 
         // --- MOCK DATA ---
         const MOCK_MERCHANTS = [
-            { id: 'm1', name: 'Super Barão - Bueno', city: 'Goiânia', distance: '0.9 km', rule: '1 bilhete / R$ 5', status: 'Ativo', cnpj: '01.234.567/0001-99', fee: '5%' },
-            { id: 'm2', name: 'Bretas - Setor Oeste', city: 'Goiânia', distance: '2.1 km', rule: '1 bilhete / R$ 10', status: 'Ativo', cnpj: '98.765.432/0001-11', fee: '4%' },
-            { id: 'm3', name: 'Supermercado Floresta', city: 'Anápolis', distance: '1.4 km', rule: '1 bilhete / R$ 5', status: 'Ativo', cnpj: '11.222.333/0001-00', fee: '5%' },
-            { id: 'm4', name: 'Rio Vermelho - Jaiara', city: 'Anápolis', distance: '3.2 km', rule: '1 bilhete / R$ 7', status: 'Ativo', cnpj: '44.555.666/0001-77', fee: '4.5%' }
+            { id: 'm1', name: 'Super Barão - Bueno', city: 'Goiânia', distance: '0.9 km', rule: '1 bilhete / R$ 5', status: 'Ativo', cnpj: '01.234.567/0001-99', fee: '5%', total_volume: 'R$ 42.500', offers: [{ item: 'Arroz 5kg', price: '24,90' }, { item: 'Feijão 1kg', price: '6,49' }] },
+            { id: 'm2', name: 'Bretas - Setor Oeste', city: 'Goiânia', distance: '2.1 km', rule: '1 bilhete / R$ 10', status: 'Ativo', cnpj: '98.765.432/0001-11', fee: '4%', total_volume: 'R$ 28.900', offers: [{ item: 'Carne kg', price: '34,90' }] },
+            { id: 'm3', name: 'Supermercado Floresta', city: 'Anápolis', distance: '1.4 km', rule: '1 bilhete / R$ 5', status: 'Ativo', cnpj: '11.222.333/0001-00', fee: '5%', total_volume: 'R$ 15.200', offers: [{ item: 'Café 500g', price: '14,90' }] },
+            { id: 'm4', name: 'Rio Vermelho - Jaiara', city: 'Anápolis', distance: '3.2 km', rule: '1 bilhete / R$ 7', status: 'Ativo', cnpj: '44.555.666/0001-77', fee: '4.5%', total_volume: 'R$ 12.800', offers: [{ item: 'Óleo 900ml', price: '5,85' }] }
         ];
 
-        // --- APP PRINCIPAL ---
-        const App = () => {
-            const [mode, setMode] = useState('client'); // 'client' or 'admin'
-            const [step, setStep] = useState('home'); 
-            const [discoveryMode, setDiscoveryMode] = useState('markets'); 
-            const [isDarkMode, setIsDarkMode] = useState(false);
-            const [selectedMerchant, setSelectedMerchant] = useState(null);
-            const [isScanning, setIsScanning] = useState(false);
-            const [registrationSuccess, setRegistrationSuccess] = useState(null);
+        const MOCK_USERS_LIST = [
+            { id: 'USR_440', phone: '(62) 99821-****', city: 'Goiânia', tickets: 142, spent: 'R$ 1.420', status: 'Ativo' },
+            { id: 'USR_121', phone: '(62) 98112-****', city: 'Anápolis', tickets: 88, spent: 'R$ 880', status: 'Ativo' },
+            { id: 'USR_889', phone: '(62) 99200-****', city: 'Goiânia', tickets: 420, spent: 'R$ 4.200', status: 'Destaque' },
+            { id: 'USR_005', phone: '(62) 98555-****', city: 'Anápolis', tickets: 12, spent: 'R$ 120', status: 'Novo' }
+        ];
 
-            const toggleTheme = () => setIsDarkMode(!isDarkMode);
+        // --- COMPONENTES AUXILIARES FORA DO APP PARA ESTABILIDADE ---
 
+        const ClientLayout = ({ children, title, showBack = false, setStep, isDarkMode, toggleTheme, setMode }) => {
             const themeClasses = useMemo(() => ({
                 bg: isDarkMode ? 'bg-slate-950' : 'bg-gray-50',
                 card: isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100',
                 text: isDarkMode ? 'text-slate-100' : 'text-gray-800',
-                textMuted: isDarkMode ? 'text-slate-400' : 'text-gray-500',
                 header: isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100',
-                nav: isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100'
             }), [isDarkMode]);
 
-            // --- AMBIENTE: CLIENTE (MOBILE) ---
-            const ClientLayout = ({ children, title, showBack = false }) => (
+            return (
                 <div className={`flex flex-col h-screen ${themeClasses.bg} ${themeClasses.text} overflow-hidden transition-colors duration-300 relative`}>
-                    {/* Botão de Modo ADM flutuante no topo */}
                     <div className="absolute top-0 left-0 right-0 z-50 flex justify-center pt-2 pointer-events-none">
-                        <button 
-                            onClick={() => setMode('admin')} 
-                            className="pointer-events-auto bg-black text-white text-[8px] font-black px-4 py-1 rounded-full opacity-60 hover:opacity-100 transition-opacity uppercase tracking-tighter"
-                        >
-                            Mudar para Modo ADM
-                        </button>
+                        <button onClick={() => setMode('admin')} className="pointer-events-auto bg-black text-white text-[8px] font-black px-4 py-1 rounded-full opacity-60 hover:opacity-100 transition-opacity uppercase tracking-tighter">Mudar para Modo ADM</button>
                     </div>
-
                     <header className={`${themeClasses.header} px-6 pt-12 pb-4 flex justify-between items-center border-b shadow-sm z-10 transition-colors`}>
                         <div className="flex items-center gap-2">
                             {showBack && (
@@ -137,175 +128,57 @@
                         </div>
                     </header>
                     <main className="flex-1 overflow-y-auto pb-24 transition-all">{children}</main>
-                    <nav className={`${themeClasses.nav} fixed bottom-0 left-0 right-0 border-t px-6 py-3 flex justify-between items-center shadow-2xl z-20`}>
-                        <button onClick={() => setStep('home')} className={`flex flex-col items-center gap-1 ${step === 'home' ? 'text-indigo-600' : isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
-                            <Icons.ShoppingBag size={24} /><span className="text-[10px] font-bold uppercase">Início</span>
-                        </button>
-                        <button onClick={() => { setStep('discovery'); setDiscoveryMode('markets'); }} className={`flex flex-col items-center gap-1 ${step === 'discovery' ? 'text-indigo-600' : isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
-                            <Icons.MapPin size={24} /><span className="text-[10px] font-bold uppercase">Mercados</span>
-                        </button>
-                        <div className="relative -mt-12">
-                            <button onClick={() => setStep('scan')} className="w-16 h-16 bg-indigo-600 rounded-full border-4 border-white dark:border-slate-900 flex items-center justify-center text-white shadow-xl active:scale-90 transition-transform">
-                                <Icons.QrCode size={28} />
-                            </button>
-                        </div>
-                        <button onClick={() => setStep('tickets')} className={`flex flex-col items-center gap-1 ${step === 'tickets' ? 'text-indigo-600' : isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
-                            <Icons.Ticket size={24} /><span className="text-[10px] font-bold uppercase">Bilhetes</span>
-                        </button>
-                        <button onClick={() => setStep('wallet')} className={`flex flex-col items-center gap-1 ${step === 'wallet' ? 'text-indigo-600' : isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
-                            <Icons.Wallet size={24} /><span className="text-[10px] font-bold uppercase">Carteira</span>
-                        </button>
-                    </nav>
                 </div>
             );
+        };
 
-            // --- AMBIENTE: ADM (DASHBOARD WEB) ---
-            const AdminPanel = () => {
-                const [adminTab, setAdminTab] = useState('dashboard');
-
-                return (
-                    <div className="flex h-screen bg-slate-100 text-slate-800 font-sans">
-                        {/* Sidebar */}
-                        <aside className="w-64 bg-slate-900 text-white flex flex-col p-6">
-                            <div className="flex items-center gap-3 mb-10">
-                                <div className="bg-indigo-600 p-2 rounded-lg"><Icons.ShoppingBag size={24} /></div>
-                                <h2 className="text-xl font-black tracking-tight">MercadoFã <span className="text-xs font-bold text-indigo-400 block">ADM PAINEL</span></h2>
-                            </div>
-                            
-                            <nav className="flex-1 space-y-2">
-                                {[
-                                    {id: 'dashboard', label: 'Dashboard', icon: <Icons.PieChart size={18}/>},
-                                    {id: 'markets', label: 'Mercados', icon: <Icons.ShoppingBag size={18}/>},
-                                    {id: 'users', label: 'Usuários', icon: <Icons.Users size={18}/>},
-                                    {id: 'raffles', label: 'Sorteios', icon: <Icons.Trophy size={18}/>},
-                                    {id: 'finance', label: 'Financeiro', icon: <Icons.Wallet size={18}/>},
-                                    {id: 'fraud', label: 'Anti-fraude', icon: <Icons.ShieldAlert size={18}/>},
-                                ].map(item => (
-                                    <button 
-                                        key={item.id}
-                                        onClick={() => setAdminTab(item.id)}
-                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${adminTab === item.id ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400 hover:bg-slate-800'}`}
-                                    >
-                                        {item.icon} {item.label}
-                                    </button>
-                                ))}
-                            </nav>
-
-                            <button onClick={() => setMode('client')} className="mt-auto flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-400/10 rounded-xl transition-all font-bold uppercase text-xs tracking-widest">
-                                <Icons.Sun size={18}/> Voltar p/ App
-                            </button>
-                        </aside>
-
-                        {/* Main Content ADM */}
-                        <main className="flex-1 flex flex-col overflow-hidden">
-                            <header className="bg-white h-16 border-b flex items-center justify-between px-8">
-                                <h3 className="font-bold text-lg capitalize">{adminTab}</h3>
-                                <div className="flex items-center gap-4">
-                                    <div className="text-right">
-                                        <p className="text-xs font-bold leading-none">Administrador Sistema</p>
-                                        <p className="text-[10px] text-slate-400">logado há 42m</p>
-                                    </div>
-                                    <div className="w-10 h-10 bg-indigo-100 rounded-full border flex items-center justify-center text-indigo-600 font-bold">A</div>
-                                </div>
-                            </header>
-
-                            <div className="flex-1 overflow-y-auto p-8">
-                                {adminTab === 'dashboard' && (
-                                    <div className="space-y-8 animate-in fade-in duration-500">
-                                        {/* Stats Cards */}
-                                        <div className="grid grid-cols-4 gap-6">
-                                            {[
-                                                { label: 'Faturamento (Mês)', val: 'R$ 84.200,00', color: 'text-indigo-600' },
-                                                { label: 'Prêmios Pagos', val: 'R$ 12.450,00', color: 'text-green-600' },
-                                                { label: 'Usuários Ativos', val: '12.482', color: 'text-slate-800' },
-                                                { label: 'Mercados Ativos', val: '84', color: 'text-orange-600' },
-                                            ].map((stat, i) => (
-                                                <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
-                                                    <p className={`text-2xl font-black ${stat.color}`}>{stat.val}</p>
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        {/* Bottom Grid Dashboard */}
-                                        <div className="grid grid-cols-3 gap-6">
-                                            <div className="col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
-                                                <h4 className="font-black mb-6">Alertas de Fraude em Goiás</h4>
-                                                <div className="space-y-4">
-                                                    {[
-                                                        { user: 'ID_8829', city: 'Goiânia', msg: '3 Cupons duplicados no Barão', risk: 'ALTO' },
-                                                        { user: 'ID_1241', city: 'Anápolis', msg: 'Valor acima da média regional', risk: 'MÉDIO' },
-                                                    ].map((alert, idx) => (
-                                                        <div key={idx} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border">
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center"><Icons.ShieldAlert size={20}/></div>
-                                                                <div>
-                                                                    <p className="text-sm font-bold">{alert.user} - {alert.city}</p>
-                                                                    <p className="text-xs text-slate-400">{alert.msg}</p>
-                                                                </div>
-                                                            </div>
-                                                            <span className={`text-[10px] font-black px-3 py-1 rounded-full ${alert.risk === 'ALTO' ? 'bg-red-500 text-white' : 'bg-yellow-400 text-black'}`}>{alert.risk}</span>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                            <div className="bg-indigo-600 p-8 rounded-3xl shadow-lg text-white flex flex-col justify-center">
-                                                <p className="text-xs uppercase font-bold opacity-60">Próximo Sorteio Especial</p>
-                                                <p className="text-4xl font-black mt-2">R$ 10.000,00</p>
-                                                <button className="mt-8 bg-white text-indigo-600 py-3 rounded-2xl font-black text-sm hover:scale-105 transition-transform">Executar Agora</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {adminTab === 'markets' && (
-                                    <div className="bg-white rounded-3xl shadow-sm border overflow-hidden animate-in slide-in-from-bottom-5">
-                                        <table className="w-full text-left">
-                                            <thead className="bg-slate-50 border-b">
-                                                <tr>
-                                                    <th className="p-4 text-xs font-black uppercase text-slate-400">Nome Mercado</th>
-                                                    <th className="p-4 text-xs font-black uppercase text-slate-400">Localidade</th>
-                                                    <th className="p-4 text-xs font-black uppercase text-slate-400">Taxa</th>
-                                                    <th className="p-4 text-xs font-black uppercase text-slate-400">Status</th>
-                                                    <th className="p-4 text-xs font-black uppercase text-slate-400">Ações</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {MOCK_MERCHANTS.map(m => (
-                                                    <tr key={m.id} className="border-b last:border-0 hover:bg-slate-50 transition-colors">
-                                                        <td className="p-4">
-                                                            <p className="font-bold">{m.name}</p>
-                                                            <p className="text-[10px] text-slate-400 tracking-tighter">{m.cnpj}</p>
-                                                        </td>
-                                                        <td className="p-4 text-sm font-medium">{m.city}</td>
-                                                        <td className="p-4 text-sm font-black text-indigo-600">{m.fee}</td>
-                                                        <td className="p-4">
-                                                            <span className="bg-green-100 text-green-600 text-[10px] font-black px-3 py-1 rounded-full">ATIVO</span>
-                                                        </td>
-                                                        <td className="p-4">
-                                                            <button className="text-xs font-bold text-indigo-500 hover:underline">Configurar</button>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                )}
-
-                                {['users', 'raffles', 'finance', 'fraud'].includes(adminTab) && adminTab !== 'dashboard' && adminTab !== 'markets' && (
-                                    <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-4">
-                                        <Icons.Settings size={64} className="animate-spin opacity-20" />
-                                        <p className="font-black uppercase text-sm tracking-[0.3em]">Painel de Controle em Expansão</p>
-                                        <p className="text-xs text-slate-400">Acessando API central do MercadoFã Goiás...</p>
-                                    </div>
-                                )}
-                            </div>
-                        </main>
+        const BottomNav = ({ step, setStep, isDarkMode, setDiscoveryMode }) => {
+            const navClass = isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100';
+            return (
+                <nav className={`${navClass} fixed bottom-0 left-0 right-0 border-t px-6 py-3 flex justify-between items-center shadow-2xl z-20`}>
+                    <button onClick={() => setStep('home')} className={`flex flex-col items-center gap-1 ${step === 'home' ? 'text-indigo-600' : 'text-gray-400'}`}>
+                        <Icons.ShoppingBag size={24} /><span className="text-[10px] font-bold uppercase">Início</span>
+                    </button>
+                    <button onClick={() => { setStep('discovery'); setDiscoveryMode('markets'); }} className={`flex flex-col items-center gap-1 ${step === 'discovery' ? 'text-indigo-600' : 'text-gray-400'}`}>
+                        <Icons.MapPin size={24} /><span className="text-[10px] font-bold uppercase">Mercados</span>
+                    </button>
+                    <div className="relative -mt-12">
+                        <button onClick={() => setStep('scan')} className="w-16 h-16 bg-indigo-600 rounded-full border-4 border-white dark:border-slate-900 flex items-center justify-center text-white shadow-xl active:scale-90 transition-transform">
+                            <Icons.QrCode size={28} />
+                        </button>
                     </div>
-                );
-            };
+                    <button onClick={() => setStep('tickets')} className={`flex flex-col items-center gap-1 ${step === 'tickets' ? 'text-indigo-600' : 'text-gray-400'}`}>
+                        <Icons.Ticket size={24} /><span className="text-[10px] font-bold uppercase">Bilhetes</span>
+                    </button>
+                    <button onClick={() => setStep('wallet')} className={`flex flex-col items-center gap-1 ${step === 'wallet' ? 'text-indigo-600' : 'text-gray-400'}`}>
+                        <Icons.Wallet size={24} /><span className="text-[10px] font-bold uppercase">Carteira</span>
+                    </button>
+                </nav>
+            );
+        };
 
-            // --- RENDERIZADOR DE TELAS CLIENTE ---
+        // --- APP PRINCIPAL ---
+        const App = () => {
+            const [mode, setMode] = useState('client'); 
+            const [step, setStep] = useState('home'); 
+            const [discoveryMode, setDiscoveryMode] = useState('markets'); 
+            const [isDarkMode, setIsDarkMode] = useState(false);
+            const [selectedMerchant, setSelectedMerchant] = useState(null);
+            const [isScanning, setIsScanning] = useState(false);
+            const [registrationSuccess, setRegistrationSuccess] = useState(null);
+            const [isAdminSidebarOpen, setIsAdminSidebarOpen] = useState(false);
+            const [adminTab, setAdminTab] = useState('dashboard');
+
+            const toggleTheme = () => setIsDarkMode(!isDarkMode);
+
+            const themeClasses = useMemo(() => ({
+                bg: isDarkMode ? 'bg-slate-950' : 'bg-gray-50',
+                card: isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100',
+                text: isDarkMode ? 'text-slate-100' : 'text-gray-800',
+                textMuted: isDarkMode ? 'text-slate-400' : 'text-gray-500'
+            }), [isDarkMode]);
+
+            // --- AMBIENTE: CLIENTE RENDER ---
             const renderClientScreen = () => {
                 switch (step) {
                     case 'home': return (
@@ -319,156 +192,160 @@
                                 <h2 className="text-4xl font-black">R$ 587,40</h2>
                                 <p className="text-[10px] opacity-80 mt-1 uppercase font-black">Goiás economiza conosco</p>
                                 <div className="flex gap-4 mt-6">
-                                    <div className="flex-1 bg-white/10 rounded-2xl p-3 backdrop-blur-sm">
-                                        <p className="text-[10px] text-green-100 font-bold uppercase">Seus Bilhetes</p>
-                                        <p className="text-xl font-black">142</p>
-                                    </div>
-                                    <div className={`flex-1 ${isDarkMode ? 'bg-slate-900/40' : 'bg-black/10'} rounded-2xl p-3`}>
-                                        <p className="text-[10px] text-green-100 font-bold uppercase">Próximo Sorteio</p>
-                                        <p className="text-xl font-black">24 Dias</p>
-                                    </div>
+                                    <div className="flex-1 bg-white/10 rounded-2xl p-3 backdrop-blur-sm"><p className="text-[10px] font-bold uppercase">Bilhetes</p><p className="text-xl font-black">142</p></div>
+                                    <div className="flex-1 bg-black/10 rounded-2xl p-3"><p className="text-[10px] font-bold uppercase">Sorteio</p><p className="text-xl font-black">24 Dias</p></div>
                                 </div>
                             </div>
-
+                            <div onClick={() => { setStep('discovery'); setDiscoveryMode('economy'); }} className="p-5 rounded-[32px] border-2 border-orange-500/20 bg-orange-500/5 flex items-center gap-4 cursor-pointer active:scale-95 transition-transform"><div className="bg-orange-500 text-white p-3 rounded-2xl shadow-lg"><Icons.Tag size={28} /></div><div className="flex-1"><h4 className="font-black text-orange-600">Promoções do Dia</h4><p className="text-[10px] text-orange-600/70 font-bold uppercase tracking-tighter">Ofertas em Goiânia e Anápolis</p></div><div className="bg-orange-500 text-white text-[10px] px-3 py-1 rounded-full font-black">GO</div></div>
                             <div className="space-y-4">
-                                <div className="flex justify-between items-center px-1">
-                                    <h3 className="font-black text-lg">Parceiros Regionais 📍</h3>
-                                    <button onClick={() => { setStep('discovery'); setDiscoveryMode('markets'); }} className="text-indigo-400 text-xs font-bold">Ver Tudo</button>
-                                </div>
-                                <div className="space-y-3">
-                                    {MOCK_MERCHANTS.slice(0, 2).map(m => (
-                                        <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`p-4 rounded-3xl border flex items-center gap-4 text-left shadow-sm active:scale-[0.98] transition-all cursor-pointer ${themeClasses.card}`}>
-                                            <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white"><Icons.ShoppingBag size={24}/></div>
-                                            <div className="flex-1">
-                                                <p className="font-bold text-sm leading-none">{m.name}</p>
-                                                <p className="text-[10px] text-gray-400 mt-2">{m.city} • {m.distance}</p>
-                                            </div>
-                                            <Icons.ChevronRight className="text-gray-300" size={18} />
-                                        </div>
-                                    ))}
-                                </div>
+                                <h3 className="font-black text-lg">Destaques Regionais 📍</h3>
+                                {MOCK_MERCHANTS.slice(0, 2).map(m => (
+                                    <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`p-4 rounded-3xl border flex items-center gap-4 text-left shadow-sm active:scale-[0.98] transition-all cursor-pointer ${themeClasses.card}`}><div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white"><Icons.ShoppingBag size={24}/></div><div className="flex-1"><p className="font-bold text-sm leading-tight">{m.name}</p><p className="text-[10px] text-gray-400 mt-1">{m.address}</p></div><Icons.ChevronRight className="text-gray-300" size={18} /></div>
+                                ))}
                             </div>
-
-                            <div onClick={() => { setStep('discovery'); setDiscoveryMode('economy'); }} className="p-5 rounded-[32px] border-2 border-orange-500/20 bg-orange-500/5 flex items-center gap-4 cursor-pointer active:scale-95 transition-transform">
-                                <div className="bg-orange-500 text-white p-3 rounded-2xl shadow-lg"><Icons.Tag size={28} /></div>
-                                <div className="flex-1">
-                                    <h4 className="font-black text-orange-600 leading-tight">Economia do Dia</h4>
-                                    <p className="text-[10px] text-orange-600/70 font-bold uppercase tracking-tighter">Produtos em oferta no Bueno e Jundiaí</p>
-                                </div>
-                                <div className="bg-orange-500 text-white text-[10px] px-3 py-1 rounded-full font-black">GO</div>
-                            </div>
-
-                            <button onClick={() => setStep('scan')} className="w-full bg-indigo-600 text-white py-6 rounded-[32px] font-black text-lg flex items-center justify-center gap-4 shadow-xl shadow-indigo-500/20 active:scale-95 transition-transform">
-                                <Icons.QrCode size={24} /> Registrar Compra
-                            </button>
+                            <button onClick={() => setStep('scan')} className="w-full bg-indigo-600 text-white py-6 rounded-[32px] font-black text-lg flex items-center justify-center gap-4 shadow-xl shadow-indigo-500/20 active:scale-95 transition-transform"><Icons.QrCode size={24} /> Registrar Nova Compra</button>
                         </div>
                     );
                     case 'discovery': return (
                         <div className="flex flex-col h-full animate-in slide-in-from-right-10 duration-500">
                             <div className="px-6 py-4 flex gap-2">
-                                {['markets', 'economy'].map(mode => (
-                                    <button 
-                                        key={mode} 
-                                        onClick={() => setDiscoveryMode(mode)}
-                                        className={`flex-1 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${discoveryMode === mode ? (mode === 'economy' ? 'bg-orange-600 text-white shadow-lg' : 'bg-indigo-600 text-white shadow-lg') : 'bg-white text-gray-400 border border-gray-100 dark:bg-slate-900'}`}
-                                    >
-                                        {mode === 'markets' ? 'Mercados' : 'Economia'}
-                                    </button>
+                                {['markets', 'economy'].map(m => (
+                                    <button key={m} onClick={() => setDiscoveryMode(m)} className={`flex-1 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${discoveryMode === m ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white text-gray-400 border border-gray-100 dark:bg-slate-900'}`}>{m === 'markets' ? 'Mercados' : 'Economia'}</button>
                                 ))}
                             </div>
                             <div className="p-6 pt-2 space-y-4 flex-1 overflow-y-auto">
                                 {discoveryMode === 'markets' ? MOCK_MERCHANTS.map(m => (
-                                    <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`${themeClasses.card} p-4 rounded-3xl border flex items-center gap-4 active:scale-[0.98] transition-all`}>
-                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${m.city === 'Goiânia' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}><Icons.MapPin size={28}/></div>
-                                        <div className="flex-1"><h4 className="font-bold text-sm leading-tight">{m.name}</h4><p className="text-[10px] text-slate-400 mt-1">{m.city} • {m.rule}</p></div>
-                                        <Icons.ChevronRight className="text-gray-300" size={18} />
-                                    </div>
+                                    <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`${themeClasses.card} p-4 rounded-3xl border shadow-sm flex items-center gap-4 active:scale-[0.98] transition-all`}><div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${m.city === 'Goiânia' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}><Icons.MapPin size={28}/></div><div className="flex-1"><h4 className="font-bold text-sm">{m.name}</h4><p className={`text-[10px] flex items-center gap-1 mt-1 ${themeClasses.textMuted}`}>{m.city} • {m.distance}</p></div><Icons.ChevronRight className="text-gray-300" size={18} /></div>
                                 )) : (
-                                    <div className="space-y-4">
-                                        <h2 className="font-black text-lg text-orange-600 px-1">Melhores Preços GO 🔥</h2>
-                                        {MOCK_MERCHANTS.map(m => (
-                                            <div key={m.id} className={`${themeClasses.card} p-4 rounded-3xl border space-y-4`}>
-                                                <div className="flex items-center gap-2 border-b pb-2"><div className="w-6 h-6 bg-indigo-600 rounded flex items-center justify-center text-white"><Icons.ShoppingBag size={12} /></div><span className="font-black text-[10px] uppercase">{m.name}</span></div>
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    <div className="bg-orange-50 dark:bg-slate-800 p-3 rounded-2xl"><p className="text-[9px] font-bold opacity-60 leading-none">Arroz 5kg</p><p className="text-xs font-black text-orange-600 mt-2 leading-none">R$ 24,90</p></div>
-                                                    <div className="bg-orange-50 dark:bg-slate-800 p-3 rounded-2xl"><p className="text-[9px] font-bold opacity-60 leading-none">Feijão 1kg</p><p className="text-xs font-black text-orange-600 mt-2 leading-none">R$ 6,49</p></div>
-                                                </div>
+                                    MOCK_MERCHANTS.map(m => (
+                                        <div key={m.id} className={`${themeClasses.card} p-5 rounded-[32px] border space-y-4`}>
+                                            <div className="flex items-center justify-between border-b pb-3 dark:border-slate-800"><span className="font-black text-xs">{m.name}</span></div>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                {m.offers.map((off, idx) => (
+                                                    <div key={idx} className={`${isDarkMode ? 'bg-slate-800' : 'bg-orange-50'} p-3 rounded-2xl`}><p className="text-[10px] font-bold opacity-70">{off.item}</p><p className="text-base font-black text-orange-600">R$ {off.price}</p></div>
+                                                ))}
                                             </div>
-                                        ))}
-                                    </div>
+                                        </div>
+                                    ))
                                 )}
                             </div>
                         </div>
                     );
                     case 'merchant-detail': return (
-                        <div className="flex flex-col h-full animate-in zoom-in-95 duration-300">
-                            <header className="p-8 bg-indigo-600 text-white pt-16 relative rounded-b-[40px]">
+                        <div className="flex flex-col h-full animate-in zoom-in-95">
+                            <header className="p-8 bg-indigo-600 text-white pt-16 relative rounded-b-[40px] shadow-lg">
                                 <button onClick={() => setStep('discovery')} className="absolute top-12 left-6 bg-white/20 p-2 rounded-full"><Icons.ChevronRight className="rotate-180" size={20} /></button>
-                                <div className="flex flex-col items-center text-center">
-                                    <div className="w-20 h-20 bg-white rounded-3xl mb-4 flex items-center justify-center text-indigo-600 shadow-xl"><Icons.ShoppingBag size={40} /></div>
-                                    <h2 className="text-2xl font-black">{selectedMerchant?.name}</h2>
-                                    <p className="opacity-80 text-sm">{selectedMerchant?.address}</p>
-                                    <button className="mt-6 bg-white text-indigo-600 px-6 py-2 rounded-full font-black text-xs flex items-center gap-2 shadow-lg" onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedMerchant.address)}`, '_blank')}><Icons.Navigation size={14} /> Navegar</button>
-                                </div>
+                                <div className="flex flex-col items-center text-center"><div className="w-20 h-20 bg-white rounded-3xl mb-4 flex items-center justify-center text-indigo-600"><Icons.ShoppingBag size={40} /></div><h2 className="text-2xl font-black">{selectedMerchant?.name}</h2><p className="opacity-80 text-sm">{selectedMerchant?.address}</p><button className="mt-6 bg-white text-indigo-600 px-6 py-2 rounded-full font-black text-xs flex items-center gap-2 shadow-lg" onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedMerchant.address)}`, '_blank')}><Icons.Navigation size={14} /> Navegar</button></div>
                             </header>
-                            <div className="p-6"><div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-slate-900 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'}`}><p className="text-xs font-bold text-indigo-400 uppercase tracking-widest leading-none">Sua Regra</p><h3 className="text-2xl font-black text-indigo-600 mt-2 leading-none">{selectedMerchant?.rule}</h3></div></div>
+                            <div className="p-6"><div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-slate-900 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'}`}><p className="text-xs font-bold text-indigo-400 uppercase">Vantagem</p><h3 className="text-2xl font-black text-indigo-600 mt-1">{selectedMerchant?.rule}</h3></div></div>
                         </div>
                     );
                     case 'scan': return (
                         <div className="bg-black h-screen flex flex-col items-center justify-center p-8">
                             <button onClick={() => setStep('home')} className="absolute top-12 left-6 text-white p-2 bg-white/10 rounded-full"><Icons.ChevronRight className="rotate-180" size={24} /></button>
-                            <div className="w-full aspect-square border-2 border-indigo-500 rounded-[56px] relative overflow-hidden flex items-center justify-center bg-indigo-900/10">
-                                <div className="animate-scan"></div>
-                                {isScanning ? <div className="text-center"><div className="w-12 h-12 border-4 border-t-indigo-500 border-white/10 rounded-full animate-spin mx-auto mb-4"></div><p className="text-indigo-400 font-black text-[10px] uppercase tracking-widest">Validando...</p></div> : <Icons.QrCode size={140} className="text-white/10" />}
-                            </div>
-                            <button onClick={() => { setIsScanning(true); setTimeout(() => { setIsScanning(false); setRegistrationSuccess(true); }, 1500); }} className="mt-12 bg-white text-black py-4 px-12 rounded-full font-black active:scale-95 transition-all">Simular Leitura</button>
+                            <div className="w-full aspect-square border-2 border-indigo-500 rounded-[56px] relative overflow-hidden flex items-center justify-center bg-indigo-900/10"><div className="animate-scan"></div>{isScanning ? <div className="text-center"><div className="w-12 h-12 border-4 border-t-indigo-500 border-white/10 rounded-full animate-spin mx-auto mb-4"></div><p className="text-indigo-400 font-black text-[10px] uppercase">Processando...</p></div> : <Icons.QrCode size={140} className="text-white/10" />}</div>
+                            <button onClick={() => { setIsScanning(true); setTimeout(() => { setIsScanning(false); setRegistrationSuccess(true); }, 1500); }} className="mt-12 bg-white text-black py-4 px-12 rounded-full font-black">Simular Leitura</button>
                             {registrationSuccess && (
-                                <div className="fixed inset-0 bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-8 z-[100] animate-in zoom-in-95 duration-300">
-                                    <Icons.CheckCircle size={80} className="text-green-500 mb-6 scale-up-animation" />
-                                    <h2 className="text-2xl font-black">Bilhetes Gerados!</h2>
-                                    <div className="bg-indigo-600 text-white p-10 rounded-[48px] w-full my-8 text-center"><p className="text-7xl font-black leading-none">+46</p><p className="text-xs uppercase mt-4 font-black opacity-60">Chances de Ganhar</p></div>
-                                    <button onClick={() => { setRegistrationSuccess(null); setStep('tickets'); }} className="w-full bg-green-600 text-white py-5 rounded-3xl font-black shadow-lg">Ver Meus Bilhetes</button>
-                                </div>
+                                <div className="fixed inset-0 bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-8 z-[100] animate-in zoom-in-95"><Icons.CheckCircle size={80} className="text-green-500 mb-6 scale-up-animation" /><h2 className="text-2xl font-black">Compra Validada!</h2><div className="bg-indigo-600 text-white p-10 rounded-[48px] w-full my-8 text-center"><p className="text-7xl font-black">+46</p><p className="text-xs uppercase mt-4 font-black opacity-60">Bilhetes Gerados</p></div><button onClick={() => { setRegistrationSuccess(null); setStep('tickets'); }} className="w-full bg-green-600 text-white py-5 rounded-3xl font-black">Ver Meus Bilhetes</button></div>
                             )}
                         </div>
                     );
                     case 'tickets': return (
-                        <div className="p-6 space-y-6">
-                            <div className={`${themeClasses.card} p-10 rounded-[40px] shadow-sm border text-center`}><p className={`${themeClasses.textMuted} text-[10px] font-black uppercase tracking-widest leading-none`}>Bilhetes Ativos</p><h2 className="text-7xl font-black text-indigo-600 my-4 leading-none">142</h2><div className="flex items-center justify-center gap-2 text-green-500 font-black text-xs mt-2"><Icons.CheckCircle size={16} /> Você concorre agora!</div></div>
-                            <h3 className="font-black text-lg">Ganhadores em Goiás 🏆</h3>
-                            <div className="space-y-3">{[{n:'Ricardo', l:'Bueno (GO)', p:'R$ 5.000'}, {n:'Mariana', l:'Jundiaí (AN)', p:'R$ 4.500'}].map((w,i)=>(<div key={i} className={`${themeClasses.card} p-4 rounded-3xl border flex items-center justify-between shadow-sm`}><div className="flex items-center gap-3"><div className="bg-yellow-100 text-yellow-600 p-3 rounded-2xl"><Icons.Trophy size={20}/></div><div><p className="font-black text-sm leading-none">{w.n}</p><p className="text-[10px] opacity-60 mt-1">{w.l}</p></div></div><p className="font-black text-green-600">{w.p}</p></div>))}</div>
+                        <div className="p-6 space-y-6 animate-in slide-in-from-bottom-10">
+                            <div className={`${themeClasses.card} p-8 rounded-[40px] shadow-sm border text-center`}><p className={`${themeClasses.textMuted} text-[10px] font-bold uppercase`}>Bilhetes Atuais</p><h2 className="text-7xl font-black text-indigo-600 my-4">142</h2><div className="flex items-center justify-center gap-2 text-green-500 font-bold text-xs"><Icons.CheckCircle size={16} /> Você já está concorrendo!</div></div>
+                            <h3 className="font-black text-lg">Ganhadores Recentes 🏆</h3>
+                            <div className="space-y-3 pb-4">{[{n:'Ricardo', l:'Bueno (GO)', p:'R$ 5.000'}, {n:'Mariana', l:'Jundiaí (AN)', p:'R$ 4.500'}].map((w,i)=>(<div key={i} className={`${themeClasses.card} p-4 rounded-3xl border flex items-center justify-between shadow-sm`}><div className="flex items-center gap-3"><div className="bg-yellow-100 text-yellow-600 p-3 rounded-2xl"><Icons.Trophy size={20}/></div><div><p className="font-bold text-sm">{w.n}</p><p className="text-[10px] opacity-60">{w.l}</p></div></div><p className="font-black text-green-600">{w.p}</p></div>))}</div>
                         </div>
                     );
                     case 'wallet': return (
-                        <div className="p-6 space-y-6">
-                            <div className="bg-slate-900 rounded-[40px] p-8 text-white shadow-2xl relative overflow-hidden"><p className="text-slate-400 text-xs font-black uppercase tracking-widest leading-none">Saldo Premiado</p><h2 className="text-5xl font-black mt-4 leading-none tracking-tight">R$ 2.450,00</h2><button className="mt-8 bg-white text-slate-950 px-6 py-4 rounded-3xl font-black text-xs shadow-lg flex items-center gap-2 w-full justify-center uppercase tracking-widest">Resgatar PIX <Icons.ArrowRight size={18} /></button></div>
-                            <h3 className="font-black text-lg px-1">Extrato de Prêmios</h3>
-                            <div className={`${themeClasses.card} p-6 rounded-3xl border flex items-center justify-between`}><div className="flex items-center gap-3"><div className="bg-yellow-100 text-yellow-600 p-3 rounded-2xl"><Icons.Trophy size={20}/></div><div><p className="font-bold text-sm leading-none">Natal Goiânia Oeste</p><p className="text-[10px] opacity-40 mt-1">Sorteio v1.2</p></div></div><p className="font-black text-green-500">R$ 2.450,00</p></div>
+                        <div className="p-6 space-y-6 animate-in fade-in">
+                            <div className="bg-slate-900 rounded-[40px] p-8 text-white shadow-2xl relative overflow-hidden"><p className="text-slate-400 text-xs font-bold uppercase">Saldo em Prêmios</p><h2 className="text-5xl font-black mt-2 tracking-tight">R$ 2.450,00</h2><button className="mt-8 bg-white text-slate-950 px-6 py-4 rounded-3xl font-black text-sm shadow-lg w-full flex justify-center gap-2">Resgatar PIX <Icons.ArrowRight size={18} /></button></div>
+                            <h3 className="font-black text-lg px-1">Prêmios Recebidos</h3>
+                            <div className={`${themeClasses.card} p-6 rounded-3xl border flex items-center justify-between shadow-sm`}><div className="flex items-center gap-3"><div className="bg-yellow-100 text-yellow-600 p-3 rounded-2xl"><Icons.Trophy size={20}/></div><div><p className="font-bold text-sm">Natal Bueno</p><p className="text-[10px] opacity-40 uppercase">Crédito Validado</p></div></div><p className="font-black text-green-500">R$ 2.450,00</p></div>
                         </div>
                     );
                     case 'profile': return (
                         <div className="p-8 space-y-8 flex flex-col items-center h-full">
-                            <div className="relative"><div className="w-32 h-32 bg-indigo-600 rounded-full border-4 border-white shadow-xl overflow-hidden"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" /></div></div>
+                            <div className="w-32 h-32 bg-indigo-600 rounded-full border-4 border-white shadow-xl overflow-hidden"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" /></div>
                             <div className="text-center"><h2 className="text-2xl font-black">João Silva</h2><div className="mt-2 bg-indigo-100 text-indigo-600 px-4 py-1 rounded-full text-[10px] font-black uppercase">Goiânia - GO</div></div>
-                            <div className="w-full space-y-2">{['Editar Perfil', 'Notificações', 'Ajuda'].map(it=>(<button key={it} className={`${themeClasses.card} w-full p-5 rounded-3xl border flex justify-between items-center font-black text-xs uppercase tracking-widest`}>{it} <Icons.ChevronRight size={16} /></button>))}</div>
-                            <div className="mt-auto text-center opacity-30"><p className="text-[10px] font-black uppercase tracking-widest">MercadoFã v{APP_VERSION}</p><p className="text-[10px]">GOIÁS ECOSSISTEMA</p></div>
+                            <div className="w-full space-y-2">{['Editar Perfil', 'Notificações', 'Ajuda'].map(it=>(<button key={it} className={`${themeClasses.card} w-full p-5 rounded-3xl border flex justify-between items-center font-black text-xs uppercase`}>{it} <Icons.ChevronRight size={16} /></button>))}</div>
+                            <div className="mt-auto opacity-30 text-[10px] font-black">MercadoFã v{APP_VERSION}</div>
                         </div>
                     );
-                    default: return <div className="p-10 text-center">Tela em construção v1.5</div>;
                 }
             };
 
-            return (
-                <div className="max-w-[1440px] mx-auto min-h-screen transition-all duration-500">
-                    {mode === 'client' ? (
-                        <div className="max-w-md mx-auto h-screen shadow-2xl bg-white relative">
-                            <ClientLayout title={step === 'home' ? 'MercadoFã' : step}>
-                                {renderClientScreen()}
-                            </ClientLayout>
+            // --- AMBIENTE: ADM RENDER ---
+            const renderAdminContent = () => {
+                switch(adminTab) {
+                    case 'dashboard': return (
+                        <div className="space-y-6 animate-in fade-in">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                {[{l:'Receita Mês', v:'R$ 84.200', c:'text-indigo-600'}, {l:'Prêmios Pagos', v:'R$ 12.450', c:'text-green-600'}, {l:'Usuários GO', v:'12.4k', c:'text-slate-800'}, {l:'Lojas Ativas', v:'84', c:'text-orange-600'}].map((s,i)=>(<div key={i} className="bg-white p-6 rounded-3xl border shadow-sm"><p className="text-[10px] font-black text-slate-400 uppercase mb-2">{s.l}</p><p className={`text-2xl font-black ${s.c}`}>{s.v}</p></div>))}
+                            </div>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div className="bg-white p-8 rounded-[32px] border"><h4 className="font-black mb-4 flex items-center gap-2">Atividade Regional</h4><div className="space-y-4"><div className="flex justify-between text-xs font-bold"><span>Goiânia</span><span>72%</span></div><div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div className="bg-indigo-500 h-full w-[72%]"></div></div><div className="flex justify-between text-xs font-bold"><span>Anápolis</span><span>28%</span></div><div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div className="bg-orange-500 h-full w-[28%]"></div></div></div></div>
+                                <div className="bg-red-600 p-8 rounded-[32px] text-white relative overflow-hidden"><Icons.ShieldAlert size={140} className="absolute -right-4 -top-4 opacity-10" /><h4 className="font-black text-xl mb-1 leading-none">Segurança em Alerta</h4><p className="text-xs opacity-80">2 usuários detectados com duplicidade.</p><button onClick={() => setAdminTab('fraud')} className="mt-6 bg-white/20 px-4 py-2 rounded-full text-[10px] font-black uppercase">Revisar Agora</button></div>
+                            </div>
                         </div>
-                    ) : (
-                        <AdminPanel />
-                    )}
+                    );
+                    case 'users': return (
+                        <div className="bg-white rounded-[32px] border overflow-hidden shadow-sm animate-in slide-in-from-bottom-5">
+                            <div className="p-6 border-b"><h4 className="font-black">Lista de Usuários (GO)</h4></div>
+                            <div className="overflow-x-auto"><table className="w-full text-left min-w-[600px]"><thead className="bg-slate-50 border-b"><tr><th className="p-4 text-[10px] font-black uppercase text-slate-400">ID</th><th className="p-4 text-[10px] font-black uppercase text-slate-400">Telefone</th><th className="p-4 text-[10px] font-black uppercase text-slate-400">Cidade</th><th className="p-4 text-[10px] font-black uppercase text-slate-400">Tickets</th><th className="p-4 text-[10px] font-black uppercase text-slate-400 text-right">Ação</th></tr></thead><tbody>{MOCK_USERS_LIST.map(u=>(<tr key={u.id} className="border-b last:border-0 hover:bg-slate-50 transition-colors"><td className="p-4 font-bold text-xs">{u.id}</td><td className="p-4 text-xs">{u.phone}</td><td className="p-4 text-xs font-bold">{u.city}</td><td className="p-4 text-xs font-black text-indigo-600">{u.tickets}</td><td className="p-4 text-right"><button className="text-[10px] font-black text-indigo-500 hover:underline">DETALHES</button></td></tr>))}</tbody></table></div>
+                        </div>
+                    );
+                    case 'markets': return (
+                        <div className="bg-white rounded-[32px] border overflow-hidden shadow-sm">
+                            <div className="p-6 border-b flex justify-between items-center"><h4 className="font-black">Redes Parceiras</h4><button className="bg-indigo-600 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase">+ Adicionar</button></div>
+                            <div className="overflow-x-auto"><table className="w-full text-left min-w-[600px]"><thead className="bg-slate-50 border-b"><tr><th className="p-4 text-[10px] font-black uppercase text-slate-400">Nome</th><th className="p-4 text-[10px] font-black uppercase text-slate-400">Cidade</th><th className="p-4 text-[10px] font-black uppercase text-slate-400 text-center">Volume</th><th className="p-4 text-[10px] font-black uppercase text-slate-400 text-right">Fee</th></tr></thead><tbody>{MOCK_MERCHANTS.map(m=>(<tr key={m.id} className="border-b last:border-0 hover:bg-slate-50"><td className="p-4 font-bold text-xs">{m.name}</td><td className="p-4 text-xs">{m.city}</td><td className="p-4 text-center text-xs font-black text-indigo-600">{m.total_volume}</td><td className="p-4 text-right"><span className="bg-indigo-50 text-indigo-600 text-[10px] font-black px-2 py-1 rounded-md">{m.fee}</span></td></tr>))}</tbody></table></div>
+                        </div>
+                    );
+                    case 'raffles': return (
+                        <div className="space-y-6"><div className="bg-indigo-600 p-8 rounded-[40px] text-white shadow-xl flex flex-col lg:flex-row justify-between items-center gap-6"><div><p className="text-[10px] font-black opacity-60 uppercase mb-1">Janeiro/2026</p><h4 className="text-4xl font-black">R$ 10.000 Acumulados</h4><p className="text-xs mt-2 opacity-80">Próxima extração em 24 dias.</p></div><button className="bg-white text-indigo-600 px-8 py-4 rounded-[24px] font-black hover:scale-105 transition-all shadow-lg">Executar Extração</button></div><div className="bg-white p-8 rounded-[32px] border"><h5 className="font-black mb-4">Auditoria Seed</h5><div className="bg-slate-50 p-4 rounded-xl font-mono text-[10px] text-slate-400 truncate">SHA256: 8f2b45e9934177d853b0...a67b9c2d1e0f983421576</div></div></div>
+                    );
+                    case 'finance': return (
+                        <div className="space-y-6"><div className="grid grid-cols-1 lg:grid-cols-3 gap-6">{[{l:'Ticket Médio', v:'R$ 124,50', c:'indigo'}, {l:'Comissões Retidas', v:'R$ 14.882', c:'green'}, {l:'Prize Pool Previsto', v:'R$ 18.000', c:'orange'}].map((s,i)=>(<div key={i} className={`bg-white p-8 rounded-[32px] border border-${s.c}-100 shadow-sm`}><p className="text-[10px] font-black text-slate-400 uppercase mb-2">{s.l}</p><p className={`text-3xl font-black text-${s.c}-600`}>{s.v}</p></div>))}</div><div className="bg-white p-8 rounded-[32px] border"><h4 className="font-black mb-4">Volume por Rede</h4>{MOCK_MERCHANTS.map(m=>(<div key={m.id} className="flex justify-between py-3 border-b last:border-0"><span className="text-sm font-bold">{m.name}</span><span className="text-sm font-black text-indigo-600">{m.total_volume}</span></div>))}</div></div>
+                    );
+                    case 'fraud': return (
+                        <div className="space-y-6"><div className="bg-white rounded-[32px] border overflow-hidden"><table className="w-full text-left min-w-[600px]"><thead className="bg-red-50 border-b"><tr><th className="p-4 text-[10px] font-black uppercase text-red-400">Usuário Suspeito</th><th className="p-4 text-[10px] font-black uppercase text-red-400">Alerta</th><th className="p-4 text-[10px] font-black uppercase text-red-400">Ação</th></tr></thead><tbody><tr className="border-b last:border-0 hover:bg-slate-50 transition-colors"><td className="p-4 font-bold text-xs">USR_440</td><td className="p-4 text-xs font-black text-red-600 uppercase">CUPOM DUPLICADO</td><td className="p-4"><button className="bg-slate-900 text-white text-[9px] px-3 py-1 rounded-md font-black">BLOQUEAR</button></td></tr></tbody></table></div></div>
+                    );
+                    default: return <div className="p-10 text-center uppercase font-black text-slate-300">Em Expansão</div>;
+                }
+            };
+
+            const menuItems = [
+                {id: 'dashboard', label: 'Dashboard', icon: <Icons.PieChart size={18}/>},
+                {id: 'markets', label: 'Mercados', icon: <Icons.ShoppingBag size={18}/>},
+                {id: 'users', label: 'Usuários', icon: <Icons.Users size={18}/>},
+                {id: 'raffles', label: 'Sorteios', icon: <Icons.Trophy size={18}/>},
+                {id: 'finance', label: 'Financeiro', icon: <Icons.Wallet size={18}/>},
+                {id: 'fraud', label: 'Anti-fraude', icon: <Icons.ShieldAlert size={18}/>},
+            ];
+
+            if (mode === 'admin') {
+                return (
+                    <div className="flex h-screen bg-slate-100 text-slate-800 font-sans overflow-hidden">
+                        {isAdminSidebarOpen && <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setIsAdminSidebarOpen(false)}></div>}
+                        <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 text-white transform transition-transform duration-300 lg:static lg:translate-x-0 flex flex-col ${isAdminSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                            <div className="p-6 flex items-center justify-between"><div className="flex items-center gap-3"><div className="bg-indigo-600 p-2 rounded-lg"><Icons.ShoppingBag size={24} /></div><h2 className="text-xl font-black tracking-tight leading-none">MercadoFã <span className="text-[10px] font-bold text-indigo-400 block mt-1 uppercase">ADM GOIÁS</span></h2></div><button className="lg:hidden p-2 text-slate-400" onClick={() => setIsAdminSidebarOpen(false)}><Icons.X size={24} /></button></div>
+                            <nav className="flex-1 space-y-1 px-4 mt-4 overflow-y-auto">{menuItems.map(item => (<button key={item.id} onClick={() => { setAdminTab(item.id); setIsAdminSidebarOpen(false); }} className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${adminTab === item.id ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400 hover:bg-slate-800'}`}>{item.icon} <span className="text-sm">{item.label}</span></button>))}</nav>
+                            <div className="p-4 mt-auto border-t border-slate-800"><button onClick={() => setMode('client')} className="w-full flex items-center justify-center gap-3 px-4 py-4 text-orange-400 hover:bg-orange-400/10 rounded-xl transition-all font-black uppercase text-[10px] border border-orange-400/20"><Icons.Sun size={18}/> Retornar ao App</button></div>
+                        </aside>
+                        <main className="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
+                            <header className="bg-white h-16 border-b flex items-center justify-between px-4 lg:px-8 shrink-0"><div className="flex items-center gap-4"><button className="p-2 lg:hidden text-slate-500" onClick={() => setIsAdminSidebarOpen(true)}><Icons.Menu size={24} /></button><h3 className="font-black text-slate-800 capitalize tracking-tight">{adminTab}</h3></div><div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center text-white font-black shadow-lg">A</div></header>
+                            <div className="flex-1 overflow-y-auto p-4 lg:p-8">{renderAdminContent()}</div>
+                        </main>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="max-w-md mx-auto h-screen shadow-2xl bg-white relative overflow-hidden">
+                    <ClientLayout title={step === 'home' ? 'MercadoFã' : step} setStep={setStep} isDarkMode={isDarkMode} toggleTheme={toggleTheme} setMode={setMode} showBack={step !== 'home'}>
+                        {renderClientScreen()}
+                    </ClientLayout>
+                    <BottomNav step={step} setStep={setStep} isDarkMode={isDarkMode} setDiscoveryMode={setDiscoveryMode} />
                 </div>
             );
         };
