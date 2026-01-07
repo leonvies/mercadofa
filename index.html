@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MercadoFã - v1.3 - Economia Real</title>
+    <title>MercadoFã - v1.5 - Ecossistema Completo</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,8 +34,9 @@
             from { transform: scale(0.5); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
-        ::-webkit-scrollbar { display: none; }
-        body { -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+        body { -webkit-tap-highlight-color: transparent; font-family: 'Inter', sans-serif; overflow-x: hidden; }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -43,27 +44,15 @@
 
     <script type="text/babel" data-presets="env,react">
         const { useState, useEffect, useMemo } = React;
-        const APP_VERSION = "1.3.0";
+        const APP_VERSION = "1.5.0";
 
-        // Componente Base de Ícone
+        // --- COMPONENTES DE ÍCONE ---
         const IconBase = ({ children, size = 24, ...props }) => (
-            <svg 
-                xmlns="http://www.w3.org/2000/svg" 
-                width={size} 
-                height={size} 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                {...props}
-            >
+            <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
                 {children}
             </svg>
         );
 
-        // Ícones SVG Inline Customizados
         const Icons = {
             ChevronRight: (p) => <IconBase {...p}><path d="m9 18 6-6-6-6"/></IconBase>,
             QrCode: (p) => <IconBase {...p}><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M12 7v3"/><path d="M7 12h3"/><path d="M12 21v-5"/><path d="M16 12h5"/></IconBase>,
@@ -79,50 +68,27 @@
             CheckCircle: (p) => <IconBase {...p}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></IconBase>,
             TrendingDown: (p) => <IconBase {...p}><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></IconBase>,
             Tag: (p) => <IconBase {...p}><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></IconBase>,
-            Navigation: (p) => <IconBase {...p}><polygon points="3 11 22 2 13 21 11 13 3 11"/></IconBase>
+            Navigation: (p) => <IconBase {...p}><polygon points="3 11 22 2 13 21 11 13 3 11"/></IconBase>,
+            ArrowRight: (p) => <IconBase {...p}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></IconBase>,
+            ShieldAlert: (p) => <IconBase {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="M12 8v4"/><path d="M12 16h.01"/></IconBase>,
+            PieChart: (p) => <IconBase {...p}><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></IconBase>,
+            Settings: (p) => <IconBase {...p}><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></IconBase>,
+            Users: (p) => <IconBase {...p}><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></IconBase>
         };
 
-        // Dados de Mercados e Ofertas (Goiânia e Anápolis)
+        // --- MOCK DATA ---
         const MOCK_MERCHANTS = [
-            { 
-                id: 'm1', name: 'Super Barão - Bueno', city: 'Goiânia', distance: '0.9 km', 
-                rule: '1 bilhete / R$ 5', has_bonus: true, bonus_text: 'Dobro de Bilhetes hoje!', 
-                address: 'Av. T-63, Setor Bueno', rating: 4.8,
-                offers: [
-                    { item: 'Arroz Cristal 5kg', price: '24,90', oldPrice: '31,50' },
-                    { item: 'Feijão Comum 1kg', price: '6,49', oldPrice: '8,90' }
-                ]
-            },
-            { 
-                id: 'm2', name: 'Bretas - Setor Oeste', city: 'Goiânia', distance: '2.1 km', 
-                rule: '1 bilhete / R$ 10', has_bonus: false, address: 'Av. Anhanguera, Oeste', rating: 4.5,
-                offers: [
-                    { item: 'Alcatra Bovina kg', price: '34,90', oldPrice: '42,00' },
-                    { item: 'Leite Piracanjuba 1L', price: '4,15', oldPrice: '5,50' }
-                ]
-            },
-            { 
-                id: 'm3', name: 'Supermercado Floresta', city: 'Anápolis', distance: '1.4 km', 
-                rule: '1 bilhete / R$ 5', has_bonus: true, bonus_text: 'Sorteio Jundiaí Premiado', 
-                address: 'Av. Jundiaí, Anápolis', rating: 4.9,
-                offers: [
-                    { item: 'Óleo de Soja 900ml', price: '5,85', oldPrice: '7,40' },
-                    { item: 'Açúcar Itajá 2kg', price: '7,20', oldPrice: '9,90' }
-                ]
-            },
-            { 
-                id: 'm4', name: 'Rio Vermelho - Jaiara', city: 'Anápolis', distance: '3.2 km', 
-                rule: '1 bilhete / R$ 7', has_bonus: false, address: 'Vila Jaiara, Anápolis', rating: 4.6,
-                offers: [
-                    { item: 'Frango Inteiro kg', price: '9,90', oldPrice: '13,50' },
-                    { item: 'Café Rancheiro 500g', price: '14,90', oldPrice: '19,00' }
-                ]
-            }
+            { id: 'm1', name: 'Super Barão - Bueno', city: 'Goiânia', distance: '0.9 km', rule: '1 bilhete / R$ 5', status: 'Ativo', cnpj: '01.234.567/0001-99', fee: '5%' },
+            { id: 'm2', name: 'Bretas - Setor Oeste', city: 'Goiânia', distance: '2.1 km', rule: '1 bilhete / R$ 10', status: 'Ativo', cnpj: '98.765.432/0001-11', fee: '4%' },
+            { id: 'm3', name: 'Supermercado Floresta', city: 'Anápolis', distance: '1.4 km', rule: '1 bilhete / R$ 5', status: 'Ativo', cnpj: '11.222.333/0001-00', fee: '5%' },
+            { id: 'm4', name: 'Rio Vermelho - Jaiara', city: 'Anápolis', distance: '3.2 km', rule: '1 bilhete / R$ 7', status: 'Ativo', cnpj: '44.555.666/0001-77', fee: '4.5%' }
         ];
 
+        // --- APP PRINCIPAL ---
         const App = () => {
+            const [mode, setMode] = useState('client'); // 'client' or 'admin'
             const [step, setStep] = useState('home'); 
-            const [discoveryMode, setDiscoveryMode] = useState('markets'); // 'markets' or 'economy'
+            const [discoveryMode, setDiscoveryMode] = useState('markets'); 
             const [isDarkMode, setIsDarkMode] = useState(false);
             const [selectedMerchant, setSelectedMerchant] = useState(null);
             const [isScanning, setIsScanning] = useState(false);
@@ -139,9 +105,20 @@
                 nav: isDarkMode ? 'bg-slate-900 border-slate-800' : 'bg-white border-gray-100'
             }), [isDarkMode]);
 
-            const Layout = ({ children, title, showBack = false }) => (
-                <div className={`flex flex-col h-screen ${themeClasses.bg} ${themeClasses.text} overflow-hidden transition-colors duration-300`}>
-                    <header className={`${themeClasses.header} px-6 pt-12 pb-4 flex justify-between items-center border-b shadow-sm z-10`}>
+            // --- AMBIENTE: CLIENTE (MOBILE) ---
+            const ClientLayout = ({ children, title, showBack = false }) => (
+                <div className={`flex flex-col h-screen ${themeClasses.bg} ${themeClasses.text} overflow-hidden transition-colors duration-300 relative`}>
+                    {/* Botão de Modo ADM flutuante no topo */}
+                    <div className="absolute top-0 left-0 right-0 z-50 flex justify-center pt-2 pointer-events-none">
+                        <button 
+                            onClick={() => setMode('admin')} 
+                            className="pointer-events-auto bg-black text-white text-[8px] font-black px-4 py-1 rounded-full opacity-60 hover:opacity-100 transition-opacity uppercase tracking-tighter"
+                        >
+                            Mudar para Modo ADM
+                        </button>
+                    </div>
+
+                    <header className={`${themeClasses.header} px-6 pt-12 pb-4 flex justify-between items-center border-b shadow-sm z-10 transition-colors`}>
                         <div className="flex items-center gap-2">
                             {showBack && (
                                 <button onClick={() => setStep('home')} className={`p-2 -ml-2 ${isDarkMode ? 'text-slate-300' : 'text-gray-600'}`}>
@@ -154,12 +131,12 @@
                             <button onClick={toggleTheme} className={`p-2 rounded-xl transition-all ${isDarkMode ? 'bg-indigo-500/20 text-yellow-400' : 'bg-gray-100 text-gray-500'}`}>
                                 {isDarkMode ? <Icons.Sun size={20} /> : <Icons.Moon size={20} />}
                             </button>
-                            <button onClick={() => setStep('profile')} className="w-9 h-9 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold border-2 border-white shadow-sm overflow-hidden">
+                            <button onClick={() => setStep('profile')} className="w-9 h-9 bg-indigo-600 rounded-full border-2 border-white shadow-sm overflow-hidden">
                                 <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar" />
                             </button>
                         </div>
                     </header>
-                    <main className="flex-1 overflow-y-auto pb-24">{children}</main>
+                    <main className="flex-1 overflow-y-auto pb-24 transition-all">{children}</main>
                     <nav className={`${themeClasses.nav} fixed bottom-0 left-0 right-0 border-t px-6 py-3 flex justify-between items-center shadow-2xl z-20`}>
                         <button onClick={() => setStep('home')} className={`flex flex-col items-center gap-1 ${step === 'home' ? 'text-indigo-600' : isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
                             <Icons.ShoppingBag size={24} /><span className="text-[10px] font-bold uppercase">Início</span>
@@ -182,393 +159,316 @@
                 </div>
             );
 
-            // SCREEN: HOME
-            const HomeScreen = () => (
-                <div className="p-6 space-y-6 animate-in fade-in duration-500">
-                    <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-[32px] p-6 text-white shadow-xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 opacity-10 -mr-8 -mt-8 rotate-12"><Icons.TrendingDown size={180} /></div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <Icons.TrendingDown size={14} className="text-green-200" />
-                            <p className="text-green-100 text-[10px] font-bold uppercase tracking-widest">Economia Detectada</p>
-                        </div>
-                        <h2 className="text-4xl font-black">R$ 587,40</h2>
-                        <p className="text-[10px] opacity-80 mt-1">Goiás economiza com o MercadoFã</p>
-                        <div className="flex gap-4 mt-6">
-                            <div className="flex-1 bg-white/10 rounded-2xl p-3 backdrop-blur-sm">
-                                <p className="text-[10px] text-green-100 font-bold uppercase">Seus Bilhetes</p>
-                                <p className="text-xl font-black">142</p>
-                            </div>
-                            <div className={`flex-1 ${isDarkMode ? 'bg-slate-900/40' : 'bg-black/10'} rounded-2xl p-3`}>
-                                <p className="text-[10px] text-green-100 font-bold uppercase">Sorteio GO</p>
-                                <p className="text-xl font-black">24 Dias</p>
-                            </div>
-                        </div>
-                    </div>
+            // --- AMBIENTE: ADM (DASHBOARD WEB) ---
+            const AdminPanel = () => {
+                const [adminTab, setAdminTab] = useState('dashboard');
 
-                    <div className="space-y-4">
-                        <div className="flex justify-between items-center px-1">
-                            <h3 className="font-black text-lg">Destaques Regionais 📍</h3>
-                            <button onClick={() => { setStep('discovery'); setDiscoveryMode('markets'); }} className="text-indigo-400 text-xs font-bold">Ver Todos</button>
-                        </div>
-                        <div className="space-y-3">
-                            {MOCK_MERCHANTS.slice(0, 2).map(m => (
-                                <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`p-4 rounded-3xl border flex items-center gap-4 text-left shadow-sm active:scale-[0.98] transition-all cursor-pointer ${themeClasses.card}`}>
-                                    <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white">
-                                        <Icons.ShoppingBag size={24}/>
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="font-bold text-sm">{m.name}</p>
-                                        <p className="text-[10px] text-gray-400">{m.city} • {m.distance}</p>
-                                    </div>
-                                    <Icons.ChevronRight className="text-gray-300" size={18} />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* NOVO: Card de Promoções na Home */}
-                    <div 
-                        onClick={() => { setStep('discovery'); setDiscoveryMode('economy'); }}
-                        className={`p-5 rounded-[32px] border-2 border-orange-500/20 bg-orange-500/5 flex items-center gap-4 cursor-pointer active:scale-95 transition-transform`}
-                    >
-                        <div className="bg-orange-500 text-white p-3 rounded-2xl shadow-lg shadow-orange-500/20">
-                            <Icons.Tag size={28} />
-                        </div>
-                        <div className="flex-1">
-                            <h4 className="font-black text-orange-600">Promoções do Dia</h4>
-                            <p className="text-[10px] text-orange-600/70 font-bold uppercase tracking-tighter">Arroz, Feijão e Carnes em oferta!</p>
-                        </div>
-                        <div className="bg-orange-500 text-white text-[10px] px-3 py-1 rounded-full font-black">
-                            GO
-                        </div>
-                    </div>
-                </div>
-            );
-
-            // SCREEN: DISCOVERY (Mercados vs Economia)
-            const DiscoveryScreen = () => {
                 return (
-                    <div className="flex flex-col h-full animate-in slide-in-from-right-10 duration-500">
-                        {/* Seletor de Modo */}
-                        <div className="px-6 py-4 flex gap-2">
-                            <button 
-                                onClick={() => setDiscoveryMode('markets')}
-                                className={`flex-1 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${discoveryMode === 'markets' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white text-gray-400 border border-gray-100 dark:bg-slate-900'}`}
-                            >
-                                Mercados
-                            </button>
-                            <button 
-                                onClick={() => setDiscoveryMode('economy')}
-                                className={`flex-1 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${discoveryMode === 'economy' ? 'bg-orange-600 text-white shadow-lg' : 'bg-white text-gray-400 border border-gray-100 dark:bg-slate-900'}`}
-                            >
-                                Economia
-                            </button>
-                        </div>
+                    <div className="flex h-screen bg-slate-100 text-slate-800 font-sans">
+                        {/* Sidebar */}
+                        <aside className="w-64 bg-slate-900 text-white flex flex-col p-6">
+                            <div className="flex items-center gap-3 mb-10">
+                                <div className="bg-indigo-600 p-2 rounded-lg"><Icons.ShoppingBag size={24} /></div>
+                                <h2 className="text-xl font-black tracking-tight">MercadoFã <span className="text-xs font-bold text-indigo-400 block">ADM PAINEL</span></h2>
+                            </div>
+                            
+                            <nav className="flex-1 space-y-2">
+                                {[
+                                    {id: 'dashboard', label: 'Dashboard', icon: <Icons.PieChart size={18}/>},
+                                    {id: 'markets', label: 'Mercados', icon: <Icons.ShoppingBag size={18}/>},
+                                    {id: 'users', label: 'Usuários', icon: <Icons.Users size={18}/>},
+                                    {id: 'raffles', label: 'Sorteios', icon: <Icons.Trophy size={18}/>},
+                                    {id: 'finance', label: 'Financeiro', icon: <Icons.Wallet size={18}/>},
+                                    {id: 'fraud', label: 'Anti-fraude', icon: <Icons.ShieldAlert size={18}/>},
+                                ].map(item => (
+                                    <button 
+                                        key={item.id}
+                                        onClick={() => setAdminTab(item.id)}
+                                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${adminTab === item.id ? 'bg-indigo-600 text-white font-bold' : 'text-slate-400 hover:bg-slate-800'}`}
+                                    >
+                                        {item.icon} {item.label}
+                                    </button>
+                                ))}
+                            </nav>
 
-                        <div className="p-6 pt-2 space-y-6 flex-1 overflow-y-auto">
-                            {discoveryMode === 'markets' ? (
-                                <div className="space-y-4">
-                                    <h2 className="font-black text-lg px-1">Redes em Goiás</h2>
-                                    {MOCK_MERCHANTS.map(m => (
-                                        <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`${themeClasses.card} p-4 rounded-3xl border shadow-sm flex items-center gap-4 transition-all active:scale-[0.98]`}>
-                                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${m.city === 'Goiânia' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
-                                                <Icons.MapPin size={28}/>
+                            <button onClick={() => setMode('client')} className="mt-auto flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-400/10 rounded-xl transition-all font-bold uppercase text-xs tracking-widest">
+                                <Icons.Sun size={18}/> Voltar p/ App
+                            </button>
+                        </aside>
+
+                        {/* Main Content ADM */}
+                        <main className="flex-1 flex flex-col overflow-hidden">
+                            <header className="bg-white h-16 border-b flex items-center justify-between px-8">
+                                <h3 className="font-bold text-lg capitalize">{adminTab}</h3>
+                                <div className="flex items-center gap-4">
+                                    <div className="text-right">
+                                        <p className="text-xs font-bold leading-none">Administrador Sistema</p>
+                                        <p className="text-[10px] text-slate-400">logado há 42m</p>
+                                    </div>
+                                    <div className="w-10 h-10 bg-indigo-100 rounded-full border flex items-center justify-center text-indigo-600 font-bold">A</div>
+                                </div>
+                            </header>
+
+                            <div className="flex-1 overflow-y-auto p-8">
+                                {adminTab === 'dashboard' && (
+                                    <div className="space-y-8 animate-in fade-in duration-500">
+                                        {/* Stats Cards */}
+                                        <div className="grid grid-cols-4 gap-6">
+                                            {[
+                                                { label: 'Faturamento (Mês)', val: 'R$ 84.200,00', color: 'text-indigo-600' },
+                                                { label: 'Prêmios Pagos', val: 'R$ 12.450,00', color: 'text-green-600' },
+                                                { label: 'Usuários Ativos', val: '12.482', color: 'text-slate-800' },
+                                                { label: 'Mercados Ativos', val: '84', color: 'text-orange-600' },
+                                            ].map((stat, i) => (
+                                                <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
+                                                    <p className={`text-2xl font-black ${stat.color}`}>{stat.val}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Bottom Grid Dashboard */}
+                                        <div className="grid grid-cols-3 gap-6">
+                                            <div className="col-span-2 bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+                                                <h4 className="font-black mb-6">Alertas de Fraude em Goiás</h4>
+                                                <div className="space-y-4">
+                                                    {[
+                                                        { user: 'ID_8829', city: 'Goiânia', msg: '3 Cupons duplicados no Barão', risk: 'ALTO' },
+                                                        { user: 'ID_1241', city: 'Anápolis', msg: 'Valor acima da média regional', risk: 'MÉDIO' },
+                                                    ].map((alert, idx) => (
+                                                        <div key={idx} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border">
+                                                            <div className="flex items-center gap-3">
+                                                                <div className="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center"><Icons.ShieldAlert size={20}/></div>
+                                                                <div>
+                                                                    <p className="text-sm font-bold">{alert.user} - {alert.city}</p>
+                                                                    <p className="text-xs text-slate-400">{alert.msg}</p>
+                                                                </div>
+                                                            </div>
+                                                            <span className={`text-[10px] font-black px-3 py-1 rounded-full ${alert.risk === 'ALTO' ? 'bg-red-500 text-white' : 'bg-yellow-400 text-black'}`}>{alert.risk}</span>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
+                                            <div className="bg-indigo-600 p-8 rounded-3xl shadow-lg text-white flex flex-col justify-center">
+                                                <p className="text-xs uppercase font-bold opacity-60">Próximo Sorteio Especial</p>
+                                                <p className="text-4xl font-black mt-2">R$ 10.000,00</p>
+                                                <button className="mt-8 bg-white text-indigo-600 py-3 rounded-2xl font-black text-sm hover:scale-105 transition-transform">Executar Agora</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {adminTab === 'markets' && (
+                                    <div className="bg-white rounded-3xl shadow-sm border overflow-hidden animate-in slide-in-from-bottom-5">
+                                        <table className="w-full text-left">
+                                            <thead className="bg-slate-50 border-b">
+                                                <tr>
+                                                    <th className="p-4 text-xs font-black uppercase text-slate-400">Nome Mercado</th>
+                                                    <th className="p-4 text-xs font-black uppercase text-slate-400">Localidade</th>
+                                                    <th className="p-4 text-xs font-black uppercase text-slate-400">Taxa</th>
+                                                    <th className="p-4 text-xs font-black uppercase text-slate-400">Status</th>
+                                                    <th className="p-4 text-xs font-black uppercase text-slate-400">Ações</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {MOCK_MERCHANTS.map(m => (
+                                                    <tr key={m.id} className="border-b last:border-0 hover:bg-slate-50 transition-colors">
+                                                        <td className="p-4">
+                                                            <p className="font-bold">{m.name}</p>
+                                                            <p className="text-[10px] text-slate-400 tracking-tighter">{m.cnpj}</p>
+                                                        </td>
+                                                        <td className="p-4 text-sm font-medium">{m.city}</td>
+                                                        <td className="p-4 text-sm font-black text-indigo-600">{m.fee}</td>
+                                                        <td className="p-4">
+                                                            <span className="bg-green-100 text-green-600 text-[10px] font-black px-3 py-1 rounded-full">ATIVO</span>
+                                                        </td>
+                                                        <td className="p-4">
+                                                            <button className="text-xs font-bold text-indigo-500 hover:underline">Configurar</button>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                )}
+
+                                {['users', 'raffles', 'finance', 'fraud'].includes(adminTab) && adminTab !== 'dashboard' && adminTab !== 'markets' && (
+                                    <div className="h-full flex flex-col items-center justify-center text-slate-400 space-y-4">
+                                        <Icons.Settings size={64} className="animate-spin opacity-20" />
+                                        <p className="font-black uppercase text-sm tracking-[0.3em]">Painel de Controle em Expansão</p>
+                                        <p className="text-xs text-slate-400">Acessando API central do MercadoFã Goiás...</p>
+                                    </div>
+                                )}
+                            </div>
+                        </main>
+                    </div>
+                );
+            };
+
+            // --- RENDERIZADOR DE TELAS CLIENTE ---
+            const renderClientScreen = () => {
+                switch (step) {
+                    case 'home': return (
+                        <div className="p-6 space-y-6 animate-in fade-in duration-500">
+                            <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-[32px] p-6 text-white shadow-xl relative overflow-hidden">
+                                <div className="absolute top-0 right-0 opacity-10 -mr-8 -mt-8 rotate-12"><Icons.TrendingDown size={180} /></div>
+                                <div className="flex items-center gap-2 mb-1">
+                                    <Icons.TrendingDown size={14} className="text-green-200" />
+                                    <p className="text-green-100 text-[10px] font-bold uppercase tracking-widest">Economia Detectada</p>
+                                </div>
+                                <h2 className="text-4xl font-black">R$ 587,40</h2>
+                                <p className="text-[10px] opacity-80 mt-1 uppercase font-black">Goiás economiza conosco</p>
+                                <div className="flex gap-4 mt-6">
+                                    <div className="flex-1 bg-white/10 rounded-2xl p-3 backdrop-blur-sm">
+                                        <p className="text-[10px] text-green-100 font-bold uppercase">Seus Bilhetes</p>
+                                        <p className="text-xl font-black">142</p>
+                                    </div>
+                                    <div className={`flex-1 ${isDarkMode ? 'bg-slate-900/40' : 'bg-black/10'} rounded-2xl p-3`}>
+                                        <p className="text-[10px] text-green-100 font-bold uppercase">Próximo Sorteio</p>
+                                        <p className="text-xl font-black">24 Dias</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center px-1">
+                                    <h3 className="font-black text-lg">Parceiros Regionais 📍</h3>
+                                    <button onClick={() => { setStep('discovery'); setDiscoveryMode('markets'); }} className="text-indigo-400 text-xs font-bold">Ver Tudo</button>
+                                </div>
+                                <div className="space-y-3">
+                                    {MOCK_MERCHANTS.slice(0, 2).map(m => (
+                                        <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`p-4 rounded-3xl border flex items-center gap-4 text-left shadow-sm active:scale-[0.98] transition-all cursor-pointer ${themeClasses.card}`}>
+                                            <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white"><Icons.ShoppingBag size={24}/></div>
                                             <div className="flex-1">
-                                                <h4 className="font-bold text-sm">{m.name}</h4>
-                                                <p className={`text-[10px] flex items-center gap-1 mt-1 ${themeClasses.textMuted}`}>
-                                                    {m.city} • {m.address}
-                                                </p>
+                                                <p className="font-bold text-sm leading-none">{m.name}</p>
+                                                <p className="text-[10px] text-gray-400 mt-2">{m.city} • {m.distance}</p>
                                             </div>
                                             <Icons.ChevronRight className="text-gray-300" size={18} />
                                         </div>
                                     ))}
                                 </div>
-                            ) : (
-                                <div className="space-y-6">
-                                    <div className="flex justify-between items-center px-1">
-                                        <h2 className="font-black text-lg text-orange-600">Ofertas de Hoje 🔥</h2>
-                                        <span className="text-[10px] font-black bg-orange-100 text-orange-600 px-3 py-1 rounded-full uppercase">Preços GO</span>
+                            </div>
+
+                            <div onClick={() => { setStep('discovery'); setDiscoveryMode('economy'); }} className="p-5 rounded-[32px] border-2 border-orange-500/20 bg-orange-500/5 flex items-center gap-4 cursor-pointer active:scale-95 transition-transform">
+                                <div className="bg-orange-500 text-white p-3 rounded-2xl shadow-lg"><Icons.Tag size={28} /></div>
+                                <div className="flex-1">
+                                    <h4 className="font-black text-orange-600 leading-tight">Economia do Dia</h4>
+                                    <p className="text-[10px] text-orange-600/70 font-bold uppercase tracking-tighter">Produtos em oferta no Bueno e Jundiaí</p>
+                                </div>
+                                <div className="bg-orange-500 text-white text-[10px] px-3 py-1 rounded-full font-black">GO</div>
+                            </div>
+
+                            <button onClick={() => setStep('scan')} className="w-full bg-indigo-600 text-white py-6 rounded-[32px] font-black text-lg flex items-center justify-center gap-4 shadow-xl shadow-indigo-500/20 active:scale-95 transition-transform">
+                                <Icons.QrCode size={24} /> Registrar Compra
+                            </button>
+                        </div>
+                    );
+                    case 'discovery': return (
+                        <div className="flex flex-col h-full animate-in slide-in-from-right-10 duration-500">
+                            <div className="px-6 py-4 flex gap-2">
+                                {['markets', 'economy'].map(mode => (
+                                    <button 
+                                        key={mode} 
+                                        onClick={() => setDiscoveryMode(mode)}
+                                        className={`flex-1 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all ${discoveryMode === mode ? (mode === 'economy' ? 'bg-orange-600 text-white shadow-lg' : 'bg-indigo-600 text-white shadow-lg') : 'bg-white text-gray-400 border border-gray-100 dark:bg-slate-900'}`}
+                                    >
+                                        {mode === 'markets' ? 'Mercados' : 'Economia'}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="p-6 pt-2 space-y-4 flex-1 overflow-y-auto">
+                                {discoveryMode === 'markets' ? MOCK_MERCHANTS.map(m => (
+                                    <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`${themeClasses.card} p-4 rounded-3xl border flex items-center gap-4 active:scale-[0.98] transition-all`}>
+                                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${m.city === 'Goiânia' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}><Icons.MapPin size={28}/></div>
+                                        <div className="flex-1"><h4 className="font-bold text-sm leading-tight">{m.name}</h4><p className="text-[10px] text-slate-400 mt-1">{m.city} • {m.rule}</p></div>
+                                        <Icons.ChevronRight className="text-gray-300" size={18} />
                                     </div>
-                                    {MOCK_MERCHANTS.map(m => (
-                                        <div key={m.id} className={`${themeClasses.card} p-5 rounded-[32px] border shadow-sm space-y-4`}>
-                                            <div className="flex items-center justify-between border-b pb-3 border-gray-50 dark:border-slate-800">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
-                                                        <Icons.ShoppingBag size={16} />
-                                                    </div>
-                                                    <span className="font-black text-xs">{m.name}</span>
+                                )) : (
+                                    <div className="space-y-4">
+                                        <h2 className="font-black text-lg text-orange-600 px-1">Melhores Preços GO 🔥</h2>
+                                        {MOCK_MERCHANTS.map(m => (
+                                            <div key={m.id} className={`${themeClasses.card} p-4 rounded-3xl border space-y-4`}>
+                                                <div className="flex items-center gap-2 border-b pb-2"><div className="w-6 h-6 bg-indigo-600 rounded flex items-center justify-center text-white"><Icons.ShoppingBag size={12} /></div><span className="font-black text-[10px] uppercase">{m.name}</span></div>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    <div className="bg-orange-50 dark:bg-slate-800 p-3 rounded-2xl"><p className="text-[9px] font-bold opacity-60 leading-none">Arroz 5kg</p><p className="text-xs font-black text-orange-600 mt-2 leading-none">R$ 24,90</p></div>
+                                                    <div className="bg-orange-50 dark:bg-slate-800 p-3 rounded-2xl"><p className="text-[9px] font-bold opacity-60 leading-none">Feijão 1kg</p><p className="text-xs font-black text-orange-600 mt-2 leading-none">R$ 6,49</p></div>
                                                 </div>
-                                                <span className="text-[9px] font-bold opacity-50">{m.city}</span>
                                             </div>
-                                            <div className="grid grid-cols-2 gap-3">
-                                                {m.offers.map((off, idx) => (
-                                                    <div key={idx} className={`${isDarkMode ? 'bg-slate-800' : 'bg-orange-50'} p-3 rounded-2xl relative`}>
-                                                        <p className="text-[10px] font-bold opacity-70 leading-tight">{off.item}</p>
-                                                        <div className="mt-2">
-                                                            <p className="text-[8px] line-through opacity-40">R$ {off.oldPrice}</p>
-                                                            <p className="text-base font-black text-orange-600">R$ {off.price}</p>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                            <button 
-                                                onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }}
-                                                className="w-full py-2 text-[10px] font-black uppercase text-indigo-500 tracking-widest"
-                                            >
-                                                Ver Todos os Itens
-                                            </button>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    );
+                    case 'merchant-detail': return (
+                        <div className="flex flex-col h-full animate-in zoom-in-95 duration-300">
+                            <header className="p-8 bg-indigo-600 text-white pt-16 relative rounded-b-[40px]">
+                                <button onClick={() => setStep('discovery')} className="absolute top-12 left-6 bg-white/20 p-2 rounded-full"><Icons.ChevronRight className="rotate-180" size={20} /></button>
+                                <div className="flex flex-col items-center text-center">
+                                    <div className="w-20 h-20 bg-white rounded-3xl mb-4 flex items-center justify-center text-indigo-600 shadow-xl"><Icons.ShoppingBag size={40} /></div>
+                                    <h2 className="text-2xl font-black">{selectedMerchant?.name}</h2>
+                                    <p className="opacity-80 text-sm">{selectedMerchant?.address}</p>
+                                    <button className="mt-6 bg-white text-indigo-600 px-6 py-2 rounded-full font-black text-xs flex items-center gap-2 shadow-lg" onClick={() => window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedMerchant.address)}`, '_blank')}><Icons.Navigation size={14} /> Navegar</button>
+                                </div>
+                            </header>
+                            <div className="p-6"><div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-slate-900 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'}`}><p className="text-xs font-bold text-indigo-400 uppercase tracking-widest leading-none">Sua Regra</p><h3 className="text-2xl font-black text-indigo-600 mt-2 leading-none">{selectedMerchant?.rule}</h3></div></div>
+                        </div>
+                    );
+                    case 'scan': return (
+                        <div className="bg-black h-screen flex flex-col items-center justify-center p-8">
+                            <button onClick={() => setStep('home')} className="absolute top-12 left-6 text-white p-2 bg-white/10 rounded-full"><Icons.ChevronRight className="rotate-180" size={24} /></button>
+                            <div className="w-full aspect-square border-2 border-indigo-500 rounded-[56px] relative overflow-hidden flex items-center justify-center bg-indigo-900/10">
+                                <div className="animate-scan"></div>
+                                {isScanning ? <div className="text-center"><div className="w-12 h-12 border-4 border-t-indigo-500 border-white/10 rounded-full animate-spin mx-auto mb-4"></div><p className="text-indigo-400 font-black text-[10px] uppercase tracking-widest">Validando...</p></div> : <Icons.QrCode size={140} className="text-white/10" />}
+                            </div>
+                            <button onClick={() => { setIsScanning(true); setTimeout(() => { setIsScanning(false); setRegistrationSuccess(true); }, 1500); }} className="mt-12 bg-white text-black py-4 px-12 rounded-full font-black active:scale-95 transition-all">Simular Leitura</button>
+                            {registrationSuccess && (
+                                <div className="fixed inset-0 bg-white dark:bg-slate-950 flex flex-col items-center justify-center p-8 z-[100] animate-in zoom-in-95 duration-300">
+                                    <Icons.CheckCircle size={80} className="text-green-500 mb-6 scale-up-animation" />
+                                    <h2 className="text-2xl font-black">Bilhetes Gerados!</h2>
+                                    <div className="bg-indigo-600 text-white p-10 rounded-[48px] w-full my-8 text-center"><p className="text-7xl font-black leading-none">+46</p><p className="text-xs uppercase mt-4 font-black opacity-60">Chances de Ganhar</p></div>
+                                    <button onClick={() => { setRegistrationSuccess(null); setStep('tickets'); }} className="w-full bg-green-600 text-white py-5 rounded-3xl font-black shadow-lg">Ver Meus Bilhetes</button>
                                 </div>
                             )}
                         </div>
-                    </div>
-                );
-            };
-
-            // SCREEN: MERCHANT DETAIL (Com Botão Navegar)
-            const MerchantDetailScreen = () => (
-                <div className="flex flex-col h-full animate-in zoom-in-95 duration-300">
-                    <header className="p-8 bg-indigo-600 text-white pt-16 relative rounded-b-[40px] shadow-lg">
-                        <button onClick={() => setStep('discovery')} className="absolute top-12 left-6 bg-white/20 p-2 rounded-full backdrop-blur-md">
-                            <Icons.ChevronRight className="rotate-180" size={20} />
-                        </button>
-                        <div className="flex flex-col items-center text-center">
-                            <div className="w-20 h-20 bg-white rounded-3xl mb-4 flex items-center justify-center text-indigo-600 shadow-xl">
-                                <Icons.ShoppingBag size={40} />
-                            </div>
-                            <h2 className="text-2xl font-black leading-tight">{selectedMerchant?.name}</h2>
-                            <p className="opacity-80 text-sm mt-1">{selectedMerchant?.address}</p>
-                            
-                            {/* NOVO: Botão Navegar */}
-                            <button 
-                                className="mt-6 bg-white text-indigo-600 px-6 py-2 rounded-full font-black text-xs flex items-center gap-2 shadow-lg active:scale-95 transition-all"
-                                onClick={() => {
-                                    const addr = encodeURIComponent(selectedMerchant.address + ', ' + selectedMerchant.city);
-                                    window.open(`https://www.google.com/maps/search/?api=1&query=${addr}`, '_blank');
-                                }}
-                            >
-                                <Icons.Navigation size={14} /> Iniciar Navegação
-                            </button>
+                    );
+                    case 'tickets': return (
+                        <div className="p-6 space-y-6">
+                            <div className={`${themeClasses.card} p-10 rounded-[40px] shadow-sm border text-center`}><p className={`${themeClasses.textMuted} text-[10px] font-black uppercase tracking-widest leading-none`}>Bilhetes Ativos</p><h2 className="text-7xl font-black text-indigo-600 my-4 leading-none">142</h2><div className="flex items-center justify-center gap-2 text-green-500 font-black text-xs mt-2"><Icons.CheckCircle size={16} /> Você concorre agora!</div></div>
+                            <h3 className="font-black text-lg">Ganhadores em Goiás 🏆</h3>
+                            <div className="space-y-3">{[{n:'Ricardo', l:'Bueno (GO)', p:'R$ 5.000'}, {n:'Mariana', l:'Jundiaí (AN)', p:'R$ 4.500'}].map((w,i)=>(<div key={i} className={`${themeClasses.card} p-4 rounded-3xl border flex items-center justify-between shadow-sm`}><div className="flex items-center gap-3"><div className="bg-yellow-100 text-yellow-600 p-3 rounded-2xl"><Icons.Trophy size={20}/></div><div><p className="font-black text-sm leading-none">{w.n}</p><p className="text-[10px] opacity-60 mt-1">{w.l}</p></div></div><p className="font-black text-green-600">{w.p}</p></div>))}</div>
                         </div>
-                    </header>
-                    <div className="p-6 space-y-6">
-                        <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-slate-900 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'}`}>
-                            <p className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Regra Ativa</p>
-                            <h3 className="text-2xl font-black text-indigo-600 mt-1">{selectedMerchant?.rule}</h3>
+                    );
+                    case 'wallet': return (
+                        <div className="p-6 space-y-6">
+                            <div className="bg-slate-900 rounded-[40px] p-8 text-white shadow-2xl relative overflow-hidden"><p className="text-slate-400 text-xs font-black uppercase tracking-widest leading-none">Saldo Premiado</p><h2 className="text-5xl font-black mt-4 leading-none tracking-tight">R$ 2.450,00</h2><button className="mt-8 bg-white text-slate-950 px-6 py-4 rounded-3xl font-black text-xs shadow-lg flex items-center gap-2 w-full justify-center uppercase tracking-widest">Resgatar PIX <Icons.ArrowRight size={18} /></button></div>
+                            <h3 className="font-black text-lg px-1">Extrato de Prêmios</h3>
+                            <div className={`${themeClasses.card} p-6 rounded-3xl border flex items-center justify-between`}><div className="flex items-center gap-3"><div className="bg-yellow-100 text-yellow-600 p-3 rounded-2xl"><Icons.Trophy size={20}/></div><div><p className="font-bold text-sm leading-none">Natal Goiânia Oeste</p><p className="text-[10px] opacity-40 mt-1">Sorteio v1.2</p></div></div><p className="font-black text-green-500">R$ 2.450,00</p></div>
                         </div>
-                        
-                        <div className="space-y-4">
-                            <h3 className="font-black text-base px-1">Ofertas em Destaque</h3>
-                            <div className="space-y-3">
-                                {selectedMerchant?.offers.map((off, idx) => (
-                                    <div key={idx} className={`${themeClasses.card} p-4 rounded-2xl border flex justify-between items-center`}>
-                                        <span className="font-bold text-sm">{off.item}</span>
-                                        <span className="font-black text-orange-600">R$ {off.price}</span>
-                                    </div>
-                                ))}
-                            </div>
+                    );
+                    case 'profile': return (
+                        <div className="p-8 space-y-8 flex flex-col items-center h-full">
+                            <div className="relative"><div className="w-32 h-32 bg-indigo-600 rounded-full border-4 border-white shadow-xl overflow-hidden"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" /></div></div>
+                            <div className="text-center"><h2 className="text-2xl font-black">João Silva</h2><div className="mt-2 bg-indigo-100 text-indigo-600 px-4 py-1 rounded-full text-[10px] font-black uppercase">Goiânia - GO</div></div>
+                            <div className="w-full space-y-2">{['Editar Perfil', 'Notificações', 'Ajuda'].map(it=>(<button key={it} className={`${themeClasses.card} w-full p-5 rounded-3xl border flex justify-between items-center font-black text-xs uppercase tracking-widest`}>{it} <Icons.ChevronRight size={16} /></button>))}</div>
+                            <div className="mt-auto text-center opacity-30"><p className="text-[10px] font-black uppercase tracking-widest">MercadoFã v{APP_VERSION}</p><p className="text-[10px]">GOIÁS ECOSSISTEMA</p></div>
                         </div>
-
-                        <button 
-                            onClick={() => setStep('scan')} 
-                            className="w-full bg-indigo-600 text-white py-5 rounded-[24px] font-black text-lg shadow-xl shadow-indigo-500/30 active:scale-95 transition-transform flex items-center justify-center gap-3"
-                        >
-                            <Icons.QrCode size={24} /> Registrar Compra
-                        </button>
-                    </div>
-                </div>
-            );
-
-            // SCREEN: TICKETS & WINNERS
-            const TicketsScreen = () => {
-                const recentWinners = [
-                    { name: 'Ricardo', location: 'Goiânia (Bueno)', prize: 'R$ 5.000,00', date: 'Dez/2025' },
-                    { name: 'Mariana', location: 'Anápolis (Jundiaí)', prize: 'R$ 4.500,00', date: 'Dez/2025' },
-                    { name: 'Felipe', location: 'Anápolis (Jaiara)', prize: 'R$ 5.000,00', date: 'Nov/2025' }
-                ];
-
-                return (
-                    <div className="p-6 space-y-6 animate-in slide-in-from-bottom-10 duration-500">
-                        <div className={`${themeClasses.card} p-8 rounded-[40px] shadow-sm border text-center`}>
-                            <p className={`${themeClasses.textMuted} text-[10px] font-bold uppercase tracking-widest`}>Total de Bilhetes Ativos</p>
-                            <h2 className="text-7xl font-black text-indigo-600 my-4">142</h2>
-                            <div className="flex items-center justify-center gap-2 text-green-500 font-bold text-xs">
-                                <Icons.CheckCircle size={16} /> Suas chances aumentaram em 15% este mês!
-                            </div>
-                        </div>
-
-                        <div className="space-y-4">
-                            <h3 className="font-black text-lg">Próximos Sorteios 📅</h3>
-                            <div className="bg-slate-900 p-6 rounded-3xl text-white shadow-lg relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-3 bg-indigo-600 rounded-bl-2xl">
-                                    <Icons.Star size={18} />
-                                </div>
-                                <p className="text-[10px] font-bold opacity-60 uppercase">Especial de Goiás - Jan/26</p>
-                                <p className="text-2xl font-black text-indigo-400 mt-1">R$ 10.000,00</p>
-                                <div className="mt-6 h-2 bg-white/10 rounded-full overflow-hidden">
-                                    <div className="h-full bg-indigo-500 w-3/4"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="space-y-4">
-                            <h3 className="font-black text-lg text-indigo-500">Ganhadores MercadoFã 🏆</h3>
-                            <div className="space-y-3">
-                                {recentWinners.map((w, idx) => (
-                                    <div key={idx} className={`${themeClasses.card} p-4 rounded-3xl border flex items-center justify-between shadow-sm`}>
-                                        <div className="flex items-center gap-3">
-                                            <div className="bg-yellow-100 text-yellow-600 p-3 rounded-2xl">
-                                                <Icons.Trophy size={20} />
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-sm">{w.name}</p>
-                                                <p className="text-[10px] opacity-60 italic">{w.location} • {w.date}</p>
-                                            </div>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="font-black text-green-500">{w.prize}</p>
-                                            <p className="text-[8px] font-bold opacity-40 uppercase">PAGO</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                );
-            };
-
-            // SCREEN: WALLET
-            const WalletScreen = () => (
-                <div className="p-6 space-y-6 animate-in fade-in duration-500">
-                    <div className="bg-slate-900 rounded-[40px] p-8 text-white shadow-2xl relative overflow-hidden">
-                        <div className="absolute -bottom-10 -right-10 opacity-10"><Icons.Wallet size={200} /></div>
-                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Saldo de Prêmios</p>
-                        <h2 className="text-5xl font-black mt-2">R$ 2.450,00</h2>
-                        <button className="mt-8 bg-white text-slate-950 px-6 py-3 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all flex items-center gap-2">
-                            Resgatar via PIX <Icons.ArrowRight size={18} />
-                        </button>
-                    </div>
-
-                    <div className="space-y-4">
-                        <h3 className="font-black text-lg">Seu Histórico</h3>
-                        <div className={`${themeClasses.card} p-5 rounded-3xl border flex items-center justify-between shadow-sm`}>
-                            <div className="flex items-center gap-3">
-                                <div className="bg-yellow-100 text-yellow-600 p-3 rounded-2xl"><Icons.Trophy size={24}/></div>
-                                <div>
-                                    <p className="font-bold text-base">Prêmio Goiânia Oeste</p>
-                                    <p className="text-[10px] opacity-60 font-medium">Sorteio de Natal 2025</p>
-                                </div>
-                            </div>
-                            <p className="font-black text-green-500 text-lg">R$ 2.450,00</p>
-                        </div>
-                    </div>
-                </div>
-            );
-
-            // SCREEN: PROFILE
-            const ProfileScreen = () => (
-                <div className="p-8 space-y-8 animate-in slide-in-from-top-10 duration-500 flex flex-col items-center h-full">
-                    <div className="relative">
-                        <div className="w-32 h-32 bg-indigo-600 rounded-full flex items-center justify-center text-4xl font-bold text-white shadow-2xl border-4 border-white dark:border-slate-900 overflow-hidden">
-                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar" />
-                        </div>
-                        <div className="absolute bottom-0 right-0 bg-green-500 w-8 h-8 rounded-full border-4 border-white dark:border-slate-900 flex items-center justify-center text-white">
-                            <Icons.CheckCircle size={14} />
-                        </div>
-                    </div>
-
-                    <div className="text-center">
-                        <h2 className="text-2xl font-black">João Silva</h2>
-                        <p className={themeClasses.textMuted}>joao.silva@goiania.com.br</p>
-                        <div className="mt-2 inline-block px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-tighter">
-                            Goiânia - GO
-                        </div>
-                    </div>
-
-                    <div className="w-full space-y-2">
-                        {['Editar Perfil', 'Notificações', 'Central de Ajuda', 'Privacidade'].map(item => (
-                            <button key={item} className={`w-full p-4 rounded-2xl border flex justify-between items-center font-bold text-sm ${themeClasses.card} active:bg-indigo-50 transition-all`}>
-                                {item} <Icons.ChevronRight size={16} className="text-gray-300" />
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="w-full mt-auto pt-8 border-t border-gray-100 dark:border-slate-800 text-center">
-                        <p className="text-[10px] font-bold opacity-30 uppercase tracking-widest mb-1">MercadoFã v{APP_VERSION}</p>
-                        <p className="text-xs font-black text-indigo-600 opacity-30">DESENVOLVIDO PARA GOIÁS</p>
-                    </div>
-                </div>
-            );
-
-            // SCANNER (SIMULAÇÃO)
-            const ScanScreen = () => {
-                const handleSimulate = () => {
-                    setIsScanning(true);
-                    setTimeout(() => {
-                        setIsScanning(false);
-                        setRegistrationSuccess({ merchant: selectedMerchant?.name || 'Mercado Parceiro', tickets: 46 });
-                    }, 1500);
-                };
-
-                if (registrationSuccess) return (
-                    <div className={`flex flex-col h-screen items-center justify-center p-6 text-center ${isDarkMode ? 'bg-slate-950 text-white' : 'bg-white'}`}>
-                        <div className="w-24 h-24 bg-green-100/20 text-green-500 rounded-full flex items-center justify-center mb-6 scale-up-animation">
-                            <Icons.CheckCircle size={60} />
-                        </div>
-                        <h2 className="text-2xl font-black">Compra Registrada!</h2>
-                        <p className="opacity-60 mt-2 mb-8 px-8 leading-tight">Seu cupom no <b>{registrationSuccess.merchant}</b> foi validado. Mais chances de ganhar!</p>
-                        <div className="bg-green-600 text-white p-8 rounded-[48px] w-full shadow-2xl shadow-green-500/30">
-                            <p className="text-xs uppercase opacity-60 font-black mb-2 tracking-widest">Você Ganhou</p>
-                            <p className="text-7xl font-black">{registrationSuccess.tickets}</p>
-                            <p className="text-[10px] mt-4 opacity-50 uppercase font-bold">Bilhetes da Sorte</p>
-                        </div>
-                        <button onClick={() => { setRegistrationSuccess(null); setStep('home'); }} className="w-full bg-green-600 text-white py-5 rounded-[24px] font-black mt-8 shadow-lg active:scale-95 transition-transform">Voltar ao Início</button>
-                    </div>
-                );
-
-                return (
-                    <div className="bg-black h-screen flex flex-col items-center justify-center p-8">
-                        <button onClick={() => setStep('home')} className="absolute top-12 left-6 text-white p-2 bg-white/10 rounded-full backdrop-blur-md">
-                            <Icons.ChevronRight className="rotate-180" size={24} />
-                        </button>
-                        <div className="w-full aspect-square border-2 border-indigo-500/50 rounded-[56px] relative overflow-hidden flex items-center justify-center bg-indigo-900/10">
-                            <div className="animate-scan"></div>
-                            {isScanning ? (
-                                <div className="text-center">
-                                    <div className="w-12 h-12 border-4 border-t-indigo-500 border-white/10 rounded-full animate-spin mx-auto mb-4"></div>
-                                    <p className="text-indigo-400 font-black text-[10px] uppercase tracking-widest">Validando Cupom...</p>
-                                </div>
-                            ) : (
-                                <Icons.QrCode size={140} className="text-white/10" />
-                            )}
-                        </div>
-                        <div className="text-center mt-12 space-y-2">
-                            <p className="text-white font-black text-xs uppercase tracking-widest">Escaneie o QR Code</p>
-                            <p className="text-white/40 text-[10px] px-10">Mantenha o código da nota fiscal no centro do visor.</p>
-                        </div>
-                        <button onClick={handleSimulate} className="mt-12 bg-white text-black py-4 px-12 rounded-full font-black shadow-xl active:scale-95 transition-transform">Simular Leitura</button>
-                    </div>
-                );
-            };
-
-            const renderScreen = () => {
-                switch (step) {
-                    case 'home': return <Layout title="MercadoFã"><HomeScreen /></Layout>;
-                    case 'discovery': return <Layout title="Busca" showBack><DiscoveryScreen /></Layout>;
-                    case 'merchant-detail': return <MerchantDetailScreen />;
-                    case 'scan': return <ScanScreen />;
-                    case 'tickets': return <Layout title="Meus Bilhetes" showBack><TicketsScreen /></Layout>;
-                    case 'wallet': return <Layout title="Minha Carteira" showBack><WalletScreen /></Layout>;
-                    case 'profile': return <Layout title="Meu Perfil" showBack><ProfileScreen /></Layout>;
-                    default: return <HomeScreen />;
+                    );
+                    default: return <div className="p-10 text-center">Tela em construção v1.5</div>;
                 }
             };
 
             return (
-                <div className={`max-w-md mx-auto min-h-screen shadow-2xl transition-all duration-300 relative ${themeClasses.bg}`}>
-                    {renderScreen()}
+                <div className="max-w-[1440px] mx-auto min-h-screen transition-all duration-500">
+                    {mode === 'client' ? (
+                        <div className="max-w-md mx-auto h-screen shadow-2xl bg-white relative">
+                            <ClientLayout title={step === 'home' ? 'MercadoFã' : step}>
+                                {renderClientScreen()}
+                            </ClientLayout>
+                        </div>
+                    ) : (
+                        <AdminPanel />
+                    )}
                 </div>
             );
         };
