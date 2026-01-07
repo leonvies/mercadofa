@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MercadoFã - v1.0</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- React & ReactDOM (Stable UMD) -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     
     <!-- Babel for JSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -34,33 +35,52 @@
             to { transform: scale(1); opacity: 1; }
         }
         ::-webkit-scrollbar { display: none; }
-        body { -webkit-tap-highlight-color: transparent; }
+        body { -webkit-tap-highlight-color: transparent; font-family: sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-gray-100">
     <div id="root"></div>
 
-    <script type="text/babel">
+    <!-- Ajustado data-presets para env,react para evitar erros de stage-2 -->
+    <script type="text/babel" data-presets="env,react">
         const { useState, useEffect, useMemo } = React;
         const APP_VERSION = "1.0.0";
 
-        // Ícones SVG Inline (Substituindo a biblioteca Lucide externa para evitar erros de forwardRef)
+        // Componente de Ícone Base para garantir compatibilidade com width/height
+        const IconBase = ({ children, size = 24, ...props }) => (
+            <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width={size} 
+                height={size} 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                {...props}
+            >
+                {children}
+            </svg>
+        );
+
+        // Ícones SVG Inline ultra-estáveis
         const Icons = {
-            ChevronRight: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>,
-            QrCode: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3"/><path d="M7 12h3"/><path d="M12 21v-5"/><path d="M12 12h.01"/><path d="M16 12h5"/></svg>,
-            Ticket: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></svg>,
-            Wallet: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>,
-            ShoppingBag: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>,
-            Bell: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>,
-            Map: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></svg>,
-            List: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>,
-            Sun: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>,
-            Moon: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>,
-            Trophy: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>,
-            MapPin: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>,
-            Star: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
-            History: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>,
-            CheckCircle: (props) => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+            ChevronRight: (p) => <IconBase {...p}><path d="m9 18 6-6-6-6"/></IconBase>,
+            QrCode: (p) => <IconBase {...p}><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3"/><path d="M7 12h3"/><path d="M12 21v-5"/><path d="M12 12h.01"/><path d="M16 12h5"/></IconBase>,
+            Ticket: (p) => <IconBase {...p}><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></IconBase>,
+            Wallet: (p) => <IconBase {...p}><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></IconBase>,
+            ShoppingBag: (p) => <IconBase {...p}><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></IconBase>,
+            Bell: (p) => <IconBase {...p}><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></IconBase>,
+            Map: (p) => <IconBase {...p}><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></IconBase>,
+            List: (p) => <IconBase {...p}><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></IconBase>,
+            Sun: (p) => <IconBase {...p}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></IconBase>,
+            Moon: (p) => <IconBase {...p}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></IconBase>,
+            Trophy: (p) => <IconBase {...p}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></IconBase>,
+            MapPin: (p) => <IconBase {...p}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></IconBase>,
+            Star: (p) => <IconBase {...p}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></IconBase>,
+            History: (p) => <IconBase {...p}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></IconBase>,
+            CheckCircle: (p) => <IconBase {...p}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></IconBase>
         };
 
         // Mock Data
@@ -98,7 +118,7 @@
                                     <Icons.ChevronRight className="rotate-180" />
                                 </button>
                             )}
-                            <h1 className="text-xl font-bold">{title}</h1>
+                            <h1 className="text-xl font-bold leading-tight">{title}</h1>
                         </div>
                         <div className="flex items-center gap-2">
                             <button onClick={toggleTheme} className={`p-2 rounded-xl transition-all ${isDarkMode ? 'bg-indigo-500/20 text-yellow-400' : 'bg-gray-100 text-gray-500'}`}>
@@ -154,13 +174,13 @@
                     <div className="space-y-4">
                         <h3 className="font-black text-lg">Vantagens de Hoje 🔥</h3>
                         {MOCK_MERCHANTS.filter(m => m.has_bonus).map(m => (
-                            <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`p-4 rounded-3xl border flex items-center gap-4 text-left shadow-sm ${themeClasses.card}`}>
+                            <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`p-4 rounded-3xl border flex items-center gap-4 text-left shadow-sm active:scale-[0.98] transition-all ${themeClasses.card}`}>
                                 <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white"><Icons.ShoppingBag size={24}/></div>
                                 <div className="flex-1">
                                     <p className="font-bold">{m.name}</p>
                                     <p className="text-xs text-orange-500 font-bold">{m.bonus_text}</p>
                                 </div>
-                                <Icons.ChevronRight className="text-gray-300" />
+                                <Icons.ChevronRight className="text-gray-300" size={20} />
                             </div>
                         ))}
                     </div>
@@ -171,43 +191,45 @@
                 <div className="p-6 space-y-4">
                     <h2 className="font-bold text-lg">Mercados Próximos</h2>
                     {MOCK_MERCHANTS.map(m => (
-                        <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`p-4 rounded-3xl border flex items-center gap-4 shadow-sm ${themeClasses.card}`}>
+                        <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`p-4 rounded-3xl border flex items-center gap-4 shadow-sm active:scale-[0.98] transition-all ${themeClasses.card}`}>
                             <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center"><Icons.MapPin size={24}/></div>
                             <div className="flex-1">
                                 <p className="font-bold">{m.name}</p>
                                 <p className="text-xs opacity-60">{m.distance} • {m.rule}</p>
                             </div>
-                            <Icons.ChevronRight className="text-gray-300" />
+                            <Icons.ChevronRight className="text-gray-300" size={20} />
                         </div>
                     ))}
                 </div>
             );
 
             const MerchantDetailScreen = () => (
-                <div className="flex flex-col h-full bg-white dark:bg-slate-900">
-                    <header className="p-6 bg-indigo-600 text-white pt-12">
-                        <button onClick={() => setStep('discovery')} className="mb-4 bg-white/20 p-2 rounded-full"><Icons.ChevronRight className="rotate-180" /></button>
+                <div className="flex flex-col h-full bg-white dark:bg-slate-900 transition-colors">
+                    <header className="p-6 bg-indigo-600 text-white pt-12 relative">
+                        <button onClick={() => setStep('discovery')} className="mb-4 bg-white/20 p-2 rounded-full inline-block"><Icons.ChevronRight className="rotate-180" size={24} /></button>
                         <h2 className="text-2xl font-black">{selectedMerchant?.name}</h2>
                         <p className="opacity-80 text-sm">{selectedMerchant?.address}</p>
                     </header>
                     <div className="p-6 space-y-6">
-                        <div className="bg-indigo-50 p-6 rounded-3xl border border-indigo-100">
-                            <h3 className="text-indigo-900 font-bold">Regra de Pontuação</h3>
+                        <div className={`${isDarkMode ? 'bg-indigo-500/10 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'} p-6 rounded-3xl border`}>
+                            <h3 className={`${isDarkMode ? 'text-indigo-400' : 'text-indigo-900'} font-bold`}>Regra de Pontuação</h3>
                             <p className="text-2xl font-black text-indigo-600 mt-2">{selectedMerchant?.rule}</p>
                         </div>
-                        <button onClick={() => setStep('scan')} className="w-full bg-indigo-600 text-white py-5 rounded-3xl font-black shadow-lg">Registrar Compra Aqui</button>
+                        <button onClick={() => setStep('scan')} className="w-full bg-indigo-600 text-white py-5 rounded-3xl font-black shadow-lg active:scale-95 transition-transform">Registrar Compra Aqui</button>
                     </div>
                 </div>
             );
 
             const ProfileScreen = () => (
-                <div className="p-6 space-y-6 text-center">
-                    <div className="w-24 h-24 bg-indigo-600 rounded-full mx-auto flex items-center justify-center text-3xl font-bold text-white mb-4">JD</div>
-                    <h2 className="text-2xl font-bold">João Silva</h2>
-                    <p className={themeClasses.textMuted}>joao.silva@email.com</p>
-                    <div className="pt-10 border-t border-gray-100 dark:border-slate-800">
-                        <p className="text-xs font-bold opacity-30">VERSÃO DO SISTEMA</p>
-                        <p className="text-lg font-black opacity-40">v{APP_VERSION}</p>
+                <div className="p-8 space-y-8 text-center flex flex-col h-full items-center justify-center">
+                    <div className="w-28 h-28 bg-indigo-600 rounded-full flex items-center justify-center text-4xl font-bold text-white mb-2 shadow-xl border-4 border-white dark:border-slate-800">JD</div>
+                    <div>
+                        <h2 className="text-2xl font-bold">João Silva</h2>
+                        <p className={themeClasses.textMuted}>joao.silva@email.com</p>
+                    </div>
+                    <div className="w-full pt-8 border-t border-gray-100 dark:border-slate-800">
+                        <p className="text-[10px] font-bold opacity-30 uppercase tracking-widest mb-1">Aplicação v{APP_VERSION}</p>
+                        <p className="text-lg font-black opacity-20">ESTÁVEL</p>
                     </div>
                 </div>
             );
@@ -222,26 +244,27 @@
                 };
 
                 if (registrationSuccess) return (
-                    <div className="flex flex-col h-screen items-center justify-center p-6 text-center bg-white dark:bg-slate-900">
+                    <div className={`flex flex-col h-screen items-center justify-center p-6 text-center ${isDarkMode ? 'bg-slate-900 text-white' : 'bg-white'}`}>
                         <Icons.CheckCircle size={80} className="text-green-500 mb-6 scale-up-animation" />
                         <h2 className="text-2xl font-black">Sucesso!</h2>
                         <p className="opacity-60 mt-2 mb-8">Sua compra no {registrationSuccess.merchant} foi validada.</p>
-                        <div className="bg-indigo-600 text-white p-8 rounded-[40px] w-full">
-                            <p className="text-xs uppercase opacity-60">Novos Bilhetes</p>
-                            <p className="text-6xl font-black">{registrationSuccess.tickets}</p>
+                        <div className="bg-indigo-600 text-white p-8 rounded-[40px] w-full shadow-xl shadow-indigo-500/20">
+                            <p className="text-xs uppercase opacity-60 font-bold mb-2">Novos Bilhetes</p>
+                            <p className="text-7xl font-black">{registrationSuccess.tickets}</p>
                         </div>
-                        <button onClick={() => { setRegistrationSuccess(null); setStep('home'); }} className="w-full bg-indigo-600 text-white py-5 rounded-3xl font-black mt-8">Voltar ao Início</button>
+                        <button onClick={() => { setRegistrationSuccess(null); setStep('home'); }} className="w-full bg-indigo-600 text-white py-5 rounded-3xl font-black mt-8 shadow-lg active:scale-95 transition-transform">Voltar ao Início</button>
                     </div>
                 );
 
                 return (
                     <div className="bg-black h-screen flex flex-col items-center justify-center p-8">
-                        <button onClick={() => setStep('home')} className="absolute top-12 left-6 text-white p-2"><Icons.ChevronRight className="rotate-180" /></button>
-                        <div className="w-full aspect-square border-2 border-indigo-500 rounded-[48px] relative overflow-hidden flex items-center justify-center">
+                        <button onClick={() => setStep('home')} className="absolute top-12 left-6 text-white p-2 bg-white/10 rounded-full"><Icons.ChevronRight className="rotate-180" size={24} /></button>
+                        <div className="w-full aspect-square border-2 border-indigo-500 rounded-[48px] relative overflow-hidden flex items-center justify-center bg-indigo-900/10">
                             <div className="animate-scan"></div>
-                            {isScanning ? <p className="text-indigo-400 font-bold">Processando...</p> : <Icons.QrCode size={100} className="text-white/10" />}
+                            {isScanning ? <p className="text-indigo-400 font-bold text-xs uppercase tracking-widest">Processando...</p> : <Icons.QrCode size={120} className="text-white/10" />}
                         </div>
-                        <button onClick={handleSimulate} className="mt-10 bg-white text-black py-4 px-10 rounded-3xl font-black">Simular Leitura</button>
+                        <p className="text-white/40 text-xs mt-10 font-medium uppercase tracking-widest">Posicione o código no centro</p>
+                        <button onClick={handleSimulate} className="mt-6 bg-white text-black py-4 px-10 rounded-3xl font-black active:scale-95 transition-transform">Simular Leitura</button>
                     </div>
                 );
             };
@@ -252,8 +275,8 @@
                     case 'discovery': return <Layout title="Mercados" showBack><DiscoveryScreen /></Layout>;
                     case 'merchant-detail': return <MerchantDetailScreen />;
                     case 'scan': return <ScanScreen />;
-                    case 'tickets': return <Layout title="Meus Bilhetes" showBack><div className="p-10 text-center opacity-40">Histórico de bilhetes v1.0</div></Layout>;
-                    case 'wallet': return <Layout title="Carteira" showBack><div className="p-10 text-center opacity-40">Prêmios em breve</div></Layout>;
+                    case 'tickets': return <Layout title="Meus Bilhetes" showBack><div className="p-10 text-center opacity-40 font-bold">Histórico de bilhetes v1.0</div></Layout>;
+                    case 'wallet': return <Layout title="Carteira" showBack><div className="p-10 text-center opacity-40 font-bold">Prêmios em breve</div></Layout>;
                     case 'profile': return <Layout title="Perfil" showBack><ProfileScreen /></Layout>;
                     default: return <HomeScreen />;
                 }
@@ -266,7 +289,8 @@
             );
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
         root.render(<App />);
     </script>
 </body>
