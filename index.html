@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MercadoFã - v1.1 - Goiás</title>
+    <title>MercadoFã - v1.3 - Economia Real</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -43,9 +43,9 @@
 
     <script type="text/babel" data-presets="env,react">
         const { useState, useEffect, useMemo } = React;
-        const APP_VERSION = "1.1.0";
+        const APP_VERSION = "1.3.0";
 
-        // Componente de Ícone Base
+        // Componente Base de Ícone
         const IconBase = ({ children, size = 24, ...props }) => (
             <svg 
                 xmlns="http://www.w3.org/2000/svg" 
@@ -63,7 +63,7 @@
             </svg>
         );
 
-        // Ícones SVG Inline
+        // Ícones SVG Inline Customizados
         const Icons = {
             ChevronRight: (p) => <IconBase {...p}><path d="m9 18 6-6-6-6"/></IconBase>,
             QrCode: (p) => <IconBase {...p}><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M12 7v3"/><path d="M7 12h3"/><path d="M12 21v-5"/><path d="M16 12h5"/></IconBase>,
@@ -71,28 +71,58 @@
             Wallet: (p) => <IconBase {...p}><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></IconBase>,
             ShoppingBag: (p) => <IconBase {...p}><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></IconBase>,
             Bell: (p) => <IconBase {...p}><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></IconBase>,
-            Map: (p) => <IconBase {...p}><path d="M14.106 5.553a2 2 0 0 0 1.788 0l3.659-1.83A1 1 0 0 1 21 4.619v12.764a1 1 0 0 1-.553.894l-4.553 2.277a2 2 0 0 1-1.788 0l-4.212-2.106a2 2 0 0 0-1.788 0l-3.659 1.83A1 1 0 0 1 3 19.381V6.618a1 1 0 0 1 .553-.894l4.553-2.277a2 2 0 0 1 1.788 0z"/><path d="M15 5.764v15"/><path d="M9 3.236v15"/></IconBase>,
-            List: (p) => <IconBase {...p}><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></IconBase>,
+            MapPin: (p) => <IconBase {...p}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></IconBase>,
             Sun: (p) => <IconBase {...p}><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/></IconBase>,
             Moon: (p) => <IconBase {...p}><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></IconBase>,
             Trophy: (p) => <IconBase {...p}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></IconBase>,
-            MapPin: (p) => <IconBase {...p}><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></IconBase>,
             Star: (p) => <IconBase {...p}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></IconBase>,
-            History: (p) => <IconBase {...p}><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></IconBase>,
             CheckCircle: (p) => <IconBase {...p}><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></IconBase>,
-            ArrowRight: (p) => <IconBase {...p}><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></IconBase>
+            TrendingDown: (p) => <IconBase {...p}><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></IconBase>,
+            Tag: (p) => <IconBase {...p}><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></IconBase>,
+            Navigation: (p) => <IconBase {...p}><polygon points="3 11 22 2 13 21 11 13 3 11"/></IconBase>
         };
 
-        // Dados Regionalizados (Goiânia e Anápolis)
+        // Dados de Mercados e Ofertas (Goiânia e Anápolis)
         const MOCK_MERCHANTS = [
-            { id: 'm1', name: 'Super Barão - Bueno', city: 'Goiânia', distance: '0.9 km', rule: '1 bilhete / R$ 5', has_bonus: true, bonus_text: 'Dobro de Bilhetes hoje!', address: 'Av. T-63, Setor Bueno', rating: 4.8 },
-            { id: 'm2', name: 'Bretas - Setor Oeste', city: 'Goiânia', distance: '2.1 km', rule: '1 bilhete / R$ 10', has_bonus: false, address: 'Av. Anhanguera, Oeste', rating: 4.5 },
-            { id: 'm3', name: 'Supermercado Floresta', city: 'Anápolis', distance: '1.4 km', rule: '1 bilhete / R$ 5', has_bonus: true, bonus_text: 'Sorteio Jundiaí Premiado', address: 'Av. Jundiaí, Anápolis', rating: 4.9 },
-            { id: 'm4', name: 'Rio Vermelho - Jaiara', city: 'Anápolis', distance: '3.2 km', rule: '1 bilhete / R$ 7', has_bonus: false, address: 'Vila Jaiara, Anápolis', rating: 4.6 }
+            { 
+                id: 'm1', name: 'Super Barão - Bueno', city: 'Goiânia', distance: '0.9 km', 
+                rule: '1 bilhete / R$ 5', has_bonus: true, bonus_text: 'Dobro de Bilhetes hoje!', 
+                address: 'Av. T-63, Setor Bueno', rating: 4.8,
+                offers: [
+                    { item: 'Arroz Cristal 5kg', price: '24,90', oldPrice: '31,50' },
+                    { item: 'Feijão Comum 1kg', price: '6,49', oldPrice: '8,90' }
+                ]
+            },
+            { 
+                id: 'm2', name: 'Bretas - Setor Oeste', city: 'Goiânia', distance: '2.1 km', 
+                rule: '1 bilhete / R$ 10', has_bonus: false, address: 'Av. Anhanguera, Oeste', rating: 4.5,
+                offers: [
+                    { item: 'Alcatra Bovina kg', price: '34,90', oldPrice: '42,00' },
+                    { item: 'Leite Piracanjuba 1L', price: '4,15', oldPrice: '5,50' }
+                ]
+            },
+            { 
+                id: 'm3', name: 'Supermercado Floresta', city: 'Anápolis', distance: '1.4 km', 
+                rule: '1 bilhete / R$ 5', has_bonus: true, bonus_text: 'Sorteio Jundiaí Premiado', 
+                address: 'Av. Jundiaí, Anápolis', rating: 4.9,
+                offers: [
+                    { item: 'Óleo de Soja 900ml', price: '5,85', oldPrice: '7,40' },
+                    { item: 'Açúcar Itajá 2kg', price: '7,20', oldPrice: '9,90' }
+                ]
+            },
+            { 
+                id: 'm4', name: 'Rio Vermelho - Jaiara', city: 'Anápolis', distance: '3.2 km', 
+                rule: '1 bilhete / R$ 7', has_bonus: false, address: 'Vila Jaiara, Anápolis', rating: 4.6,
+                offers: [
+                    { item: 'Frango Inteiro kg', price: '9,90', oldPrice: '13,50' },
+                    { item: 'Café Rancheiro 500g', price: '14,90', oldPrice: '19,00' }
+                ]
+            }
         ];
 
         const App = () => {
             const [step, setStep] = useState('home'); 
+            const [discoveryMode, setDiscoveryMode] = useState('markets'); // 'markets' or 'economy'
             const [isDarkMode, setIsDarkMode] = useState(false);
             const [selectedMerchant, setSelectedMerchant] = useState(null);
             const [isScanning, setIsScanning] = useState(false);
@@ -111,7 +141,7 @@
 
             const Layout = ({ children, title, showBack = false }) => (
                 <div className={`flex flex-col h-screen ${themeClasses.bg} ${themeClasses.text} overflow-hidden transition-colors duration-300`}>
-                    <header className={`${themeClasses.header} px-6 pt-12 pb-4 flex justify-between items-center border-b shadow-sm z-10 transition-colors`}>
+                    <header className={`${themeClasses.header} px-6 pt-12 pb-4 flex justify-between items-center border-b shadow-sm z-10`}>
                         <div className="flex items-center gap-2">
                             {showBack && (
                                 <button onClick={() => setStep('home')} className={`p-2 -ml-2 ${isDarkMode ? 'text-slate-300' : 'text-gray-600'}`}>
@@ -129,12 +159,12 @@
                             </button>
                         </div>
                     </header>
-                    <main className="flex-1 overflow-y-auto pb-24 transition-all">{children}</main>
+                    <main className="flex-1 overflow-y-auto pb-24">{children}</main>
                     <nav className={`${themeClasses.nav} fixed bottom-0 left-0 right-0 border-t px-6 py-3 flex justify-between items-center shadow-2xl z-20`}>
                         <button onClick={() => setStep('home')} className={`flex flex-col items-center gap-1 ${step === 'home' ? 'text-indigo-600' : isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
                             <Icons.ShoppingBag size={24} /><span className="text-[10px] font-bold uppercase">Início</span>
                         </button>
-                        <button onClick={() => setStep('discovery')} className={`flex flex-col items-center gap-1 ${step === 'discovery' ? 'text-indigo-600' : isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
+                        <button onClick={() => { setStep('discovery'); setDiscoveryMode('markets'); }} className={`flex flex-col items-center gap-1 ${step === 'discovery' ? 'text-indigo-600' : isDarkMode ? 'text-slate-500' : 'text-gray-400'}`}>
                             <Icons.MapPin size={24} /><span className="text-[10px] font-bold uppercase">Mercados</span>
                         </button>
                         <div className="relative -mt-12">
@@ -152,100 +182,152 @@
                 </div>
             );
 
-            // TELA: INÍCIO
+            // SCREEN: HOME
             const HomeScreen = () => (
                 <div className="p-6 space-y-6 animate-in fade-in duration-500">
-                    <div className="bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-[32px] p-6 text-white shadow-xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 opacity-10 -mr-8 -mt-8 rotate-12"><Icons.Trophy size={180} /></div>
-                        <p className="text-indigo-100 text-xs font-bold uppercase tracking-widest">Gastos em Goiás (Jan)</p>
-                        <h2 className="text-4xl font-black mt-1">R$ 482,35</h2>
+                    <div className="bg-gradient-to-br from-green-600 to-green-800 rounded-[32px] p-6 text-white shadow-xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 opacity-10 -mr-8 -mt-8 rotate-12"><Icons.TrendingDown size={180} /></div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <Icons.TrendingDown size={14} className="text-green-200" />
+                            <p className="text-green-100 text-[10px] font-bold uppercase tracking-widest">Economia Detectada</p>
+                        </div>
+                        <h2 className="text-4xl font-black">R$ 587,40</h2>
+                        <p className="text-[10px] opacity-80 mt-1">Goiás economiza com o MercadoFã</p>
                         <div className="flex gap-4 mt-6">
                             <div className="flex-1 bg-white/10 rounded-2xl p-3 backdrop-blur-sm">
-                                <p className="text-[10px] text-indigo-100 font-bold uppercase">Seus Bilhetes</p>
-                                <p className="text-xl font-black">96</p>
+                                <p className="text-[10px] text-green-100 font-bold uppercase">Seus Bilhetes</p>
+                                <p className="text-xl font-black">142</p>
                             </div>
                             <div className={`flex-1 ${isDarkMode ? 'bg-slate-900/40' : 'bg-black/10'} rounded-2xl p-3`}>
-                                <p className="text-[10px] text-indigo-100 font-bold uppercase">Sorteio GO</p>
+                                <p className="text-[10px] text-green-100 font-bold uppercase">Sorteio GO</p>
                                 <p className="text-xl font-black">24 Dias</p>
                             </div>
                         </div>
                     </div>
 
                     <div className="space-y-4">
-                        <div className="flex justify-between items-center">
-                            <h3 className="font-black text-lg">Próximos de Você 📍</h3>
-                            <button onClick={() => setStep('discovery')} className="text-indigo-400 text-xs font-bold">Ver Mapa</button>
+                        <div className="flex justify-between items-center px-1">
+                            <h3 className="font-black text-lg">Destaques Regionais 📍</h3>
+                            <button onClick={() => { setStep('discovery'); setDiscoveryMode('markets'); }} className="text-indigo-400 text-xs font-bold">Ver Todos</button>
                         </div>
-                        {MOCK_MERCHANTS.slice(0, 2).map(m => (
-                            <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`p-4 rounded-3xl border flex items-center gap-4 text-left shadow-sm active:scale-[0.98] transition-all cursor-pointer ${themeClasses.card}`}>
-                                <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white">
-                                    <Icons.ShoppingBag size={24}/>
-                                </div>
-                                <div className="flex-1">
-                                    <p className="font-bold text-sm leading-tight">{m.name}</p>
-                                    <p className="text-[10px] text-gray-400 mt-1">{m.address}</p>
-                                    {m.has_bonus && <p className="text-[10px] text-green-500 font-bold mt-1">🔥 {m.bonus_text}</p>}
-                                </div>
-                                <Icons.ChevronRight className="text-gray-300" size={18} />
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className={`${isDarkMode ? 'bg-indigo-500/10' : 'bg-indigo-50'} p-4 rounded-2xl border border-indigo-200/20 flex gap-3 items-center`}>
-                        <div className="bg-indigo-600 text-white p-2 rounded-xl"><Icons.Trophy size={18}/></div>
-                        <div>
-                            <p className="text-xs font-bold">Você é destaque em {MOCK_MERCHANTS[0].city}!</p>
-                            <p className="text-[10px] opacity-60 italic">Continue comprando para subir no ranking.</p>
-                        </div>
-                    </div>
-                </div>
-            );
-
-            // TELA: MERCADOS (DISCOVERY)
-            const DiscoveryScreen = () => {
-                const cities = ['Goiânia', 'Anápolis'];
-                const [filter, setFilter] = useState('Todas');
-
-                const filtered = filter === 'Todas' ? MOCK_MERCHANTS : MOCK_MERCHANTS.filter(m => m.city === filter);
-
-                return (
-                    <div className="p-6 space-y-6 animate-in slide-in-from-right-10 duration-500">
-                        <div className="flex gap-2 overflow-x-auto pb-2">
-                            {['Todas', ...cities].map(c => (
-                                <button 
-                                    key={c}
-                                    onClick={() => setFilter(c)}
-                                    className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all ${filter === c ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white text-gray-400 border border-gray-100'}`}
-                                >
-                                    {c}
-                                </button>
-                            ))}
-                        </div>
-
-                        <div className="space-y-4">
-                            {filtered.map(m => (
-                                <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`${themeClasses.card} p-4 rounded-3xl border shadow-sm flex items-center gap-4 transition-all active:scale-[0.98]`}>
-                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${m.city === 'Goiânia' ? 'bg-blue-100 text-blue-600' : 'bg-orange-100 text-orange-600'}`}>
-                                        <Icons.MapPin size={28}/>
+                        <div className="space-y-3">
+                            {MOCK_MERCHANTS.slice(0, 2).map(m => (
+                                <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`p-4 rounded-3xl border flex items-center gap-4 text-left shadow-sm active:scale-[0.98] transition-all cursor-pointer ${themeClasses.card}`}>
+                                    <div className="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white">
+                                        <Icons.ShoppingBag size={24}/>
                                     </div>
                                     <div className="flex-1">
-                                        <h4 className="font-bold text-sm">{m.name}</h4>
-                                        <p className={`text-[10px] flex items-center gap-1 mt-1 ${themeClasses.textMuted}`}>
-                                            {m.city} • {m.distance} de você
-                                        </p>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <span className="text-[9px] font-black text-indigo-500 uppercase">{m.rule}</span>
-                                        </div>
+                                        <p className="font-bold text-sm">{m.name}</p>
+                                        <p className="text-[10px] text-gray-400">{m.city} • {m.distance}</p>
                                     </div>
                                     <Icons.ChevronRight className="text-gray-300" size={18} />
                                 </div>
                             ))}
                         </div>
                     </div>
+
+                    {/* NOVO: Card de Promoções na Home */}
+                    <div 
+                        onClick={() => { setStep('discovery'); setDiscoveryMode('economy'); }}
+                        className={`p-5 rounded-[32px] border-2 border-orange-500/20 bg-orange-500/5 flex items-center gap-4 cursor-pointer active:scale-95 transition-transform`}
+                    >
+                        <div className="bg-orange-500 text-white p-3 rounded-2xl shadow-lg shadow-orange-500/20">
+                            <Icons.Tag size={28} />
+                        </div>
+                        <div className="flex-1">
+                            <h4 className="font-black text-orange-600">Promoções do Dia</h4>
+                            <p className="text-[10px] text-orange-600/70 font-bold uppercase tracking-tighter">Arroz, Feijão e Carnes em oferta!</p>
+                        </div>
+                        <div className="bg-orange-500 text-white text-[10px] px-3 py-1 rounded-full font-black">
+                            GO
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // SCREEN: DISCOVERY (Mercados vs Economia)
+            const DiscoveryScreen = () => {
+                return (
+                    <div className="flex flex-col h-full animate-in slide-in-from-right-10 duration-500">
+                        {/* Seletor de Modo */}
+                        <div className="px-6 py-4 flex gap-2">
+                            <button 
+                                onClick={() => setDiscoveryMode('markets')}
+                                className={`flex-1 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${discoveryMode === 'markets' ? 'bg-indigo-600 text-white shadow-lg' : 'bg-white text-gray-400 border border-gray-100 dark:bg-slate-900'}`}
+                            >
+                                Mercados
+                            </button>
+                            <button 
+                                onClick={() => setDiscoveryMode('economy')}
+                                className={`flex-1 py-3 rounded-2xl font-black text-xs uppercase tracking-widest transition-all ${discoveryMode === 'economy' ? 'bg-orange-600 text-white shadow-lg' : 'bg-white text-gray-400 border border-gray-100 dark:bg-slate-900'}`}
+                            >
+                                Economia
+                            </button>
+                        </div>
+
+                        <div className="p-6 pt-2 space-y-6 flex-1 overflow-y-auto">
+                            {discoveryMode === 'markets' ? (
+                                <div className="space-y-4">
+                                    <h2 className="font-black text-lg px-1">Redes em Goiás</h2>
+                                    {MOCK_MERCHANTS.map(m => (
+                                        <div key={m.id} onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }} className={`${themeClasses.card} p-4 rounded-3xl border shadow-sm flex items-center gap-4 transition-all active:scale-[0.98]`}>
+                                            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${m.city === 'Goiânia' ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
+                                                <Icons.MapPin size={28}/>
+                                            </div>
+                                            <div className="flex-1">
+                                                <h4 className="font-bold text-sm">{m.name}</h4>
+                                                <p className={`text-[10px] flex items-center gap-1 mt-1 ${themeClasses.textMuted}`}>
+                                                    {m.city} • {m.address}
+                                                </p>
+                                            </div>
+                                            <Icons.ChevronRight className="text-gray-300" size={18} />
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div className="space-y-6">
+                                    <div className="flex justify-between items-center px-1">
+                                        <h2 className="font-black text-lg text-orange-600">Ofertas de Hoje 🔥</h2>
+                                        <span className="text-[10px] font-black bg-orange-100 text-orange-600 px-3 py-1 rounded-full uppercase">Preços GO</span>
+                                    </div>
+                                    {MOCK_MERCHANTS.map(m => (
+                                        <div key={m.id} className={`${themeClasses.card} p-5 rounded-[32px] border shadow-sm space-y-4`}>
+                                            <div className="flex items-center justify-between border-b pb-3 border-gray-50 dark:border-slate-800">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
+                                                        <Icons.ShoppingBag size={16} />
+                                                    </div>
+                                                    <span className="font-black text-xs">{m.name}</span>
+                                                </div>
+                                                <span className="text-[9px] font-bold opacity-50">{m.city}</span>
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-3">
+                                                {m.offers.map((off, idx) => (
+                                                    <div key={idx} className={`${isDarkMode ? 'bg-slate-800' : 'bg-orange-50'} p-3 rounded-2xl relative`}>
+                                                        <p className="text-[10px] font-bold opacity-70 leading-tight">{off.item}</p>
+                                                        <div className="mt-2">
+                                                            <p className="text-[8px] line-through opacity-40">R$ {off.oldPrice}</p>
+                                                            <p className="text-base font-black text-orange-600">R$ {off.price}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button 
+                                                onClick={() => { setSelectedMerchant(m); setStep('merchant-detail'); }}
+                                                className="w-full py-2 text-[10px] font-black uppercase text-indigo-500 tracking-widest"
+                                            >
+                                                Ver Todos os Itens
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 );
             };
 
-            // TELA: DETALHE DO MERCADO
+            // SCREEN: MERCHANT DETAIL (Com Botão Navegar)
             const MerchantDetailScreen = () => (
                 <div className="flex flex-col h-full animate-in zoom-in-95 duration-300">
                     <header className="p-8 bg-indigo-600 text-white pt-16 relative rounded-b-[40px] shadow-lg">
@@ -256,18 +338,39 @@
                             <div className="w-20 h-20 bg-white rounded-3xl mb-4 flex items-center justify-center text-indigo-600 shadow-xl">
                                 <Icons.ShoppingBag size={40} />
                             </div>
-                            <h2 className="text-2xl font-black">{selectedMerchant?.name}</h2>
+                            <h2 className="text-2xl font-black leading-tight">{selectedMerchant?.name}</h2>
                             <p className="opacity-80 text-sm mt-1">{selectedMerchant?.address}</p>
+                            
+                            {/* NOVO: Botão Navegar */}
+                            <button 
+                                className="mt-6 bg-white text-indigo-600 px-6 py-2 rounded-full font-black text-xs flex items-center gap-2 shadow-lg active:scale-95 transition-all"
+                                onClick={() => {
+                                    const addr = encodeURIComponent(selectedMerchant.address + ', ' + selectedMerchant.city);
+                                    window.open(`https://www.google.com/maps/search/?api=1&query=${addr}`, '_blank');
+                                }}
+                            >
+                                <Icons.Navigation size={14} /> Iniciar Navegação
+                            </button>
                         </div>
                     </header>
                     <div className="p-6 space-y-6">
                         <div className={`p-6 rounded-3xl border ${isDarkMode ? 'bg-slate-900 border-indigo-500/20' : 'bg-indigo-50 border-indigo-100'}`}>
-                            <p className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Sua Vantagem</p>
+                            <p className="text-xs font-bold text-indigo-400 uppercase tracking-widest">Regra Ativa</p>
                             <h3 className="text-2xl font-black text-indigo-600 mt-1">{selectedMerchant?.rule}</h3>
-                            <p className="text-[10px] opacity-60 mt-4 leading-tight">
-                                Válido para todas as compras registradas neste estabelecimento em {selectedMerchant?.city}.
-                            </p>
                         </div>
+                        
+                        <div className="space-y-4">
+                            <h3 className="font-black text-base px-1">Ofertas em Destaque</h3>
+                            <div className="space-y-3">
+                                {selectedMerchant?.offers.map((off, idx) => (
+                                    <div key={idx} className={`${themeClasses.card} p-4 rounded-2xl border flex justify-between items-center`}>
+                                        <span className="font-bold text-sm">{off.item}</span>
+                                        <span className="font-black text-orange-600">R$ {off.price}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
                         <button 
                             onClick={() => setStep('scan')} 
                             className="w-full bg-indigo-600 text-white py-5 rounded-[24px] font-black text-lg shadow-xl shadow-indigo-500/30 active:scale-95 transition-transform flex items-center justify-center gap-3"
@@ -278,68 +381,95 @@
                 </div>
             );
 
-            // TELA: BILHETES
-            const TicketsScreen = () => (
-                <div className="p-6 space-y-6 animate-in slide-in-from-bottom-10 duration-500">
-                    <div className={`${themeClasses.card} p-8 rounded-[40px] shadow-sm border text-center`}>
-                        <p className={`${themeClasses.textMuted} text-[10px] font-bold uppercase tracking-widest`}>Total de Bilhetes Acumulados</p>
-                        <h2 className="text-7xl font-black text-indigo-600 my-4">96</h2>
-                        <div className="flex items-center justify-center gap-2 text-green-500 font-bold text-xs">
-                             <Icons.CheckCircle size={16} /> Você já concorre ao prêmio deste mês!
-                        </div>
-                    </div>
+            // SCREEN: TICKETS & WINNERS
+            const TicketsScreen = () => {
+                const recentWinners = [
+                    { name: 'Ricardo', location: 'Goiânia (Bueno)', prize: 'R$ 5.000,00', date: 'Dez/2025' },
+                    { name: 'Mariana', location: 'Anápolis (Jundiaí)', prize: 'R$ 4.500,00', date: 'Dez/2025' },
+                    { name: 'Felipe', location: 'Anápolis (Jaiara)', prize: 'R$ 5.000,00', date: 'Nov/2025' }
+                ];
 
-                    <div className="space-y-4">
-                        <h3 className="font-black text-lg">Sorteios Ativos em Goiás</h3>
-                        <div className="bg-slate-900 p-6 rounded-3xl text-white shadow-lg relative overflow-hidden">
-                            <div className="absolute top-0 right-0 p-3 bg-indigo-600 rounded-bl-2xl">
-                                <Icons.Star size={18} />
-                            </div>
-                            <p className="text-[10px] font-bold opacity-60 uppercase">Sorteio Mensal - Jan/26</p>
-                            <p className="text-2xl font-black text-indigo-400 mt-1">R$ 5.000,00</p>
-                            <div className="mt-6 h-2 bg-white/10 rounded-full overflow-hidden">
-                                <div className="h-full bg-indigo-500 w-3/4"></div>
-                            </div>
-                            <div className="flex justify-between mt-2 text-[10px] font-bold opacity-50 uppercase">
-                                <span>Início: 01/01</span>
-                                <span>Fim: 31/01</span>
+                return (
+                    <div className="p-6 space-y-6 animate-in slide-in-from-bottom-10 duration-500">
+                        <div className={`${themeClasses.card} p-8 rounded-[40px] shadow-sm border text-center`}>
+                            <p className={`${themeClasses.textMuted} text-[10px] font-bold uppercase tracking-widest`}>Total de Bilhetes Ativos</p>
+                            <h2 className="text-7xl font-black text-indigo-600 my-4">142</h2>
+                            <div className="flex items-center justify-center gap-2 text-green-500 font-bold text-xs">
+                                <Icons.CheckCircle size={16} /> Suas chances aumentaram em 15% este mês!
                             </div>
                         </div>
-                    </div>
-                </div>
-            );
 
-            // TELA: CARTEIRA
+                        <div className="space-y-4">
+                            <h3 className="font-black text-lg">Próximos Sorteios 📅</h3>
+                            <div className="bg-slate-900 p-6 rounded-3xl text-white shadow-lg relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-3 bg-indigo-600 rounded-bl-2xl">
+                                    <Icons.Star size={18} />
+                                </div>
+                                <p className="text-[10px] font-bold opacity-60 uppercase">Especial de Goiás - Jan/26</p>
+                                <p className="text-2xl font-black text-indigo-400 mt-1">R$ 10.000,00</p>
+                                <div className="mt-6 h-2 bg-white/10 rounded-full overflow-hidden">
+                                    <div className="h-full bg-indigo-500 w-3/4"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <h3 className="font-black text-lg text-indigo-500">Ganhadores MercadoFã 🏆</h3>
+                            <div className="space-y-3">
+                                {recentWinners.map((w, idx) => (
+                                    <div key={idx} className={`${themeClasses.card} p-4 rounded-3xl border flex items-center justify-between shadow-sm`}>
+                                        <div className="flex items-center gap-3">
+                                            <div className="bg-yellow-100 text-yellow-600 p-3 rounded-2xl">
+                                                <Icons.Trophy size={20} />
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-sm">{w.name}</p>
+                                                <p className="text-[10px] opacity-60 italic">{w.location} • {w.date}</p>
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="font-black text-green-500">{w.prize}</p>
+                                            <p className="text-[8px] font-bold opacity-40 uppercase">PAGO</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // SCREEN: WALLET
             const WalletScreen = () => (
                 <div className="p-6 space-y-6 animate-in fade-in duration-500">
                     <div className="bg-slate-900 rounded-[40px] p-8 text-white shadow-2xl relative overflow-hidden">
                         <div className="absolute -bottom-10 -right-10 opacity-10"><Icons.Wallet size={200} /></div>
-                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Saldo Disponível</p>
-                        <h2 className="text-5xl font-black mt-2">R$ 50,00</h2>
+                        <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Saldo de Prêmios</p>
+                        <h2 className="text-5xl font-black mt-2">R$ 2.450,00</h2>
                         <button className="mt-8 bg-white text-slate-950 px-6 py-3 rounded-2xl font-black text-sm shadow-lg active:scale-95 transition-all flex items-center gap-2">
                             Resgatar via PIX <Icons.ArrowRight size={18} />
                         </button>
                     </div>
 
                     <div className="space-y-4">
-                        <h3 className="font-black text-lg">Histórico de Prêmios</h3>
-                        <div className={`${themeClasses.card} p-4 rounded-3xl border flex items-center justify-between`}>
+                        <h3 className="font-black text-lg">Seu Histórico</h3>
+                        <div className={`${themeClasses.card} p-5 rounded-3xl border flex items-center justify-between shadow-sm`}>
                             <div className="flex items-center gap-3">
-                                <div className="bg-yellow-100 text-yellow-600 p-3 rounded-2xl"><Icons.Trophy size={20}/></div>
+                                <div className="bg-yellow-100 text-yellow-600 p-3 rounded-2xl"><Icons.Trophy size={24}/></div>
                                 <div>
-                                    <p className="font-bold text-sm">Prêmio Goiânia Oeste</p>
-                                    <p className="text-[10px] opacity-60">Sorteio de Dezembro</p>
+                                    <p className="font-bold text-base">Prêmio Goiânia Oeste</p>
+                                    <p className="text-[10px] opacity-60 font-medium">Sorteio de Natal 2025</p>
                                 </div>
                             </div>
-                            <p className="font-black text-green-500">R$ 50,00</p>
+                            <p className="font-black text-green-500 text-lg">R$ 2.450,00</p>
                         </div>
                     </div>
                 </div>
             );
 
-            // TELA: PERFIL
+            // SCREEN: PROFILE
             const ProfileScreen = () => (
-                <div className="p-8 space-y-8 animate-in slide-in-from-top-10 duration-500 flex flex-col items-center">
+                <div className="p-8 space-y-8 animate-in slide-in-from-top-10 duration-500 flex flex-col items-center h-full">
                     <div className="relative">
                         <div className="w-32 h-32 bg-indigo-600 rounded-full flex items-center justify-center text-4xl font-bold text-white shadow-2xl border-4 border-white dark:border-slate-900 overflow-hidden">
                             <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar" />
@@ -352,7 +482,7 @@
                     <div className="text-center">
                         <h2 className="text-2xl font-black">João Silva</h2>
                         <p className={themeClasses.textMuted}>joao.silva@goiania.com.br</p>
-                        <div className="mt-2 inline-block px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-[10px] font-black uppercase">
+                        <div className="mt-2 inline-block px-3 py-1 bg-indigo-100 text-indigo-600 rounded-full text-[10px] font-black uppercase tracking-tighter">
                             Goiânia - GO
                         </div>
                     </div>
@@ -365,7 +495,7 @@
                         ))}
                     </div>
 
-                    <div className="w-full pt-8 border-t border-gray-100 dark:border-slate-800 text-center">
+                    <div className="w-full mt-auto pt-8 border-t border-gray-100 dark:border-slate-800 text-center">
                         <p className="text-[10px] font-bold opacity-30 uppercase tracking-widest mb-1">MercadoFã v{APP_VERSION}</p>
                         <p className="text-xs font-black text-indigo-600 opacity-30">DESENVOLVIDO PARA GOIÁS</p>
                     </div>
@@ -378,7 +508,7 @@
                     setIsScanning(true);
                     setTimeout(() => {
                         setIsScanning(false);
-                        setRegistrationSuccess({ merchant: selectedMerchant?.name || 'Mercado Parceiro', tickets: 24 });
+                        setRegistrationSuccess({ merchant: selectedMerchant?.name || 'Mercado Parceiro', tickets: 46 });
                     }, 1500);
                 };
 
@@ -388,13 +518,13 @@
                             <Icons.CheckCircle size={60} />
                         </div>
                         <h2 className="text-2xl font-black">Compra Registrada!</h2>
-                        <p className="opacity-60 mt-2 mb-8 px-8">Seu cupom no <b>{registrationSuccess.merchant}</b> foi validado com sucesso.</p>
-                        <div className="bg-indigo-600 text-white p-8 rounded-[48px] w-full shadow-2xl shadow-indigo-500/30">
+                        <p className="opacity-60 mt-2 mb-8 px-8 leading-tight">Seu cupom no <b>{registrationSuccess.merchant}</b> foi validado. Mais chances de ganhar!</p>
+                        <div className="bg-green-600 text-white p-8 rounded-[48px] w-full shadow-2xl shadow-green-500/30">
                             <p className="text-xs uppercase opacity-60 font-black mb-2 tracking-widest">Você Ganhou</p>
                             <p className="text-7xl font-black">{registrationSuccess.tickets}</p>
                             <p className="text-[10px] mt-4 opacity-50 uppercase font-bold">Bilhetes da Sorte</p>
                         </div>
-                        <button onClick={() => { setRegistrationSuccess(null); setStep('home'); }} className="w-full bg-indigo-600 text-white py-5 rounded-[24px] font-black mt-8 shadow-lg active:scale-95 transition-transform">Voltar ao Início</button>
+                        <button onClick={() => { setRegistrationSuccess(null); setStep('home'); }} className="w-full bg-green-600 text-white py-5 rounded-[24px] font-black mt-8 shadow-lg active:scale-95 transition-transform">Voltar ao Início</button>
                     </div>
                 );
 
@@ -426,7 +556,7 @@
             const renderScreen = () => {
                 switch (step) {
                     case 'home': return <Layout title="MercadoFã"><HomeScreen /></Layout>;
-                    case 'discovery': return <Layout title="Encontrar Mercados" showBack><DiscoveryScreen /></Layout>;
+                    case 'discovery': return <Layout title="Busca" showBack><DiscoveryScreen /></Layout>;
                     case 'merchant-detail': return <MerchantDetailScreen />;
                     case 'scan': return <ScanScreen />;
                     case 'tickets': return <Layout title="Meus Bilhetes" showBack><TicketsScreen /></Layout>;
